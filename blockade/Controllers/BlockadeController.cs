@@ -17,22 +17,16 @@ namespace blockade.Controllers
 
 		public ActionResult Index()
 		{
-			var players = new BlockadePlayer[]
-			{
-				this._playerProvider.GetPlayer("helmut"),
-				this._playerProvider.GetPlayer("fernando")
-				//this._fernandoPlayerFactory(),
-				//this._fernandoPlayerFactory(),
-				//this._fernandoPlayerFactory(),
-				//this._fernandoPlayerFactory(),
-				//new FernandoPlayer(new Random(Seed: random.Next())),
-				//new ZedPlayer(new Random(Seed: random.Next()))
-				//new HelmutPlayer(),
-				//new HelmutPlayer()
-				//new HelmutPlayer()
-				//this._fernandoPlayerFactory()
-			}.ToList();
-			var game = new BlockadeGame(players);
+			var configuration = BlockadeConfiguration.MakeConfiguration(
+				rows: 10,
+				cols: 16,
+				playersWithStartingLocation: new[]
+				{
+					Tuple.Create(this._playerProvider.GetPlayer("helmut"), Tuple.Create(0, 0)),
+					Tuple.Create(this._playerProvider.GetPlayer("fernando"), Tuple.Create(9, 15))
+				}.ToList());
+
+			var game = new BlockadeGame(configuration);
 			var result = game.Run();
 
 			return this.View("blockade", new BlockadeModel 
