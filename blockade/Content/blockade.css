@@ -1,0 +1,16 @@
+
+.board-blockade {
+    outline: 8px solid black;
+    margin: 16px;
+}
+
+td {
+    width: 25px;
+    height: 25px;
+    outline: 2px solid black;
+}
+
+#state-slider {
+    width: 400px;
+    margin: 16px;
+}

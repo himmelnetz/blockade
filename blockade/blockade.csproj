@@ -70,25 +70,45 @@
     <Reference Include="Autofac.Integration.Mvc">
       <HintPath>..\packages\Autofac.Mvc5.4.0.2\lib\net45\Autofac.Integration.Mvc.dll</HintPath>
     </Reference>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\packages\Newtonsoft.Json.4.5.6\lib\net40\Newtonsoft.Json.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Content\" />
     <Folder Include="Models\" />
     <Folder Include="Scripts\" />
     <Folder Include="Views\blockade\" />
+    <Folder Include="BusinessLogic\" />
+    <Folder Include="BusinessLogic\Players\" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Controllers\BlockadeController.cs" />
+    <Compile Include="BusinessLogic\BlockadeBoard.cs" />
+    <Compile Include="BusinessLogic\BlockadeGame.cs" />
+    <Compile Include="BusinessLogic\BlockadeResult.cs" />
+    <Compile Include="BusinessLogic\ReadOnlyBlockadeBoard.cs" />
+    <Compile Include="BusinessLogic\Players\BlockadePlayer.cs" />
+    <Compile Include="BusinessLogic\Players\FernandoPlayer.cs" />
+    <Compile Include="BusinessLogic\Players\HelmutPlayer.cs" />
+    <Compile Include="BusinessLogic\Players\ZedPlayer.cs" />
+    <Compile Include="Models\BlockadeModel.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\Web.config" />
     <Content Include="Web.config" />
     <Content Include="Global.asax" />
     <Content Include="packages.config" />
-    <Content Include="Views\blockade\Index.cshtml" />
+    <Content Include="Content\blockade.css" />
+    <Content Include="Content\jquery-ui-smoothness.css" />
+    <Content Include="Content\reset.css" />
+    <Content Include="Scripts\blockade.js" />
+    <Content Include="Scripts\jquery-2.1.4.min.js" />
+    <Content Include="Scripts\jquery-ui.js" />
+    <Content Include="Views\blockade\blockade.cshtml" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" />

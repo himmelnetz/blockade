@@ -1,0 +1,44 @@
+﻿﻿@model blockade.BlockadeModel
+
+@using Newtonsoft.Json;
+
+@{
+	var boardJsonString = JsonConvert.SerializeObject(Model.Board);
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Blockade</title>
+    <link rel="stylesheet" href="/Content/reset.css" />
+    <link rel="stylesheet" href="/Content/jquery-ui-smoothness.css" />
+    <link rel="stylesheet" href="/Content/blockade.css" />
+</head>
+<body>
+
+<table class="board-blockade">
+@foreach (var row in Enumerable.Range(0, Model.Board.Length))
+{
+	@: <tr>
+	foreach (var col in Enumerable.Range(0, Model.Board[row].Length))
+	{
+		@: <td id="cell-@row-@col" />
+	}
+	@: </tr>
+}
+</table>
+<div id="state-slider"></div>
+
+<script src="/Scripts/jquery-2.1.4.min.js"></script>
+<script src="/Scripts/jquery-ui.js"></script>
+
+<script>
+	var BOARD = JSON.parse('@Html.Raw(boardJsonString)');
+	var NUM_ROWS = BOARD.length;
+	var NUM_COLS = BOARD[0].length;
+</script>
+
+<script src="/Scripts/blockade.js"></script>
+
+</body>
+</html>
