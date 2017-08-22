@@ -6,7 +6,6 @@ using System.Web.Mvc;
 using System.Web.Routing;
 using Autofac;
 using Autofac.Integration.Mvc;
-using blockade.Controllers;
 
 namespace blockade
 {
@@ -34,16 +33,7 @@ namespace blockade
 			// got mv5 going with mono using http://curtis.schlak.com/2014/02/04/setup-asp-net-mvc-4-on-monodevelop-4.2.html
 
 			var builder = new ContainerBuilder();
-
-			var random = new Random();
-			builder.Register(cc => new Random(random.Next())).InstancePerDependency();
-			builder.RegisterType<ZedPlayer>().InstancePerDependency();
-			builder.RegisterType<FernandoPlayer>().InstancePerDependency();
-			builder.RegisterType<HelmutPlayer>().InstancePerDependency();
-
-			// we have to explicitly register the controller because for some reason autofac's RegisterControllers isnt working right
-			builder.RegisterType<BlockadeController>();
-
+			AutofacConfig.Configure(builder);
 			var container = builder.Build();
 			DependencyResolver.SetResolver(new AutofacDependencyResolver(container));
 

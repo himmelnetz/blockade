@@ -81,6 +81,7 @@
     <Folder Include="Views\blockade\" />
     <Folder Include="BusinessLogic\" />
     <Folder Include="BusinessLogic\Players\" />
+    <Folder Include="App_Start\" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Global.asax.cs">
@@ -96,6 +97,8 @@
     <Compile Include="BusinessLogic\Players\HelmutPlayer.cs" />
     <Compile Include="BusinessLogic\Players\ZedPlayer.cs" />
     <Compile Include="Models\BlockadeModel.cs" />
+    <Compile Include="BusinessLogic\Players\PlayerProvider.cs" />
+    <Compile Include="App_Start\AutofacConfig.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\Web.config" />

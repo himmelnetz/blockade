@@ -8,25 +8,27 @@ namespace blockade.Controllers
 {
 	public class BlockadeController : Controller
 	{
-		private readonly Func<FernandoPlayer> _fernandoPlayerFactory;
+		private readonly PlayerProvider _playerProvider;
 
-		public BlockadeController(Func<FernandoPlayer> fernandoPlayerFactory)
+		public BlockadeController(PlayerProvider playerProvider)
 		{
-			this._fernandoPlayerFactory = fernandoPlayerFactory;
+			this._playerProvider = playerProvider;
 		}
 
 		public ActionResult Index()
 		{
 			var players = new BlockadePlayer[]
 			{
+				this._playerProvider.GetPlayer("helmut"),
+				this._playerProvider.GetPlayer("fernando")
 				//this._fernandoPlayerFactory(),
 				//this._fernandoPlayerFactory(),
 				//this._fernandoPlayerFactory(),
 				//this._fernandoPlayerFactory(),
 				//new FernandoPlayer(new Random(Seed: random.Next())),
 				//new ZedPlayer(new Random(Seed: random.Next()))
-				new HelmutPlayer(),
-				new HelmutPlayer()
+				//new HelmutPlayer(),
+				//new HelmutPlayer()
 				//new HelmutPlayer()
 				//this._fernandoPlayerFactory()
 			}.ToList();
