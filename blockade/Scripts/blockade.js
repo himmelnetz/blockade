@@ -46,9 +46,19 @@ function on_slider_change() {
 function on_play_new_game_button() {
 	$.post(
 		"/blockade/playOneGame",
-		{ /* data goes here */ },
+		{data: JSON.stringify({
+			Rows: 20,
+			Cols: 25,
+			PlayersWithStartingPosition: [
+				{ Name: "fernando", StartingLocation: { Item1: 0, Item2: 0 }},
+				{ Name: "helmut", StartingLocation: { Item1: 19, Item2: 24 }},
+				{ Name: "zed", StartingLocation: { Item1: 0, Item2: 24 }}
+			]
+		})},
 		function(data) {
 			BOARD = data.Board;
+			NUM_ROWS = BOARD.length;
+			NUM_COLS = BOARD[0].length;
 			initialize_to_new_game();
 		},
 		"json");
@@ -79,6 +89,7 @@ function init_page() {
 }
 
 function initialize_to_new_game() {
+	reset_board_table_dom(NUM_ROWS, NUM_COLS);
 	// need to re-init slider so it has the right range
 	init_slider();
 	for (var i = 0; i < PLAYER_END_POSITIONS.length; i++) {
@@ -95,6 +106,21 @@ function initialize_to_new_game() {
         }
     }
     set_to_state(0, true);
+}
+
+function reset_board_table_dom(rows, cols) {
+	// nuke whatever board exists and re-gen it
+	$("#board-table").html("");
+	var table = document.getElementById("board-table");
+	for (var row = 0; row < NUM_ROWS; row++) {
+		var tr = document.createElement("tr");
+		for (var col = 0; col < NUM_COLS; col++) {
+			var td = document.createElement("td");
+			td.id = "cell-" + row + "-" + col;
+			tr.appendChild(td);
+		}
+		table.appendChild(tr);
+	}
 }
 
 $(document).ready(function() {

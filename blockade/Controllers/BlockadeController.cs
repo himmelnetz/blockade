@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using System.IO;
 using System.Web.Mvc;
+using Newtonsoft.Json;
 
 namespace blockade.Controllers
 {
@@ -38,14 +40,15 @@ namespace blockade.Controllers
 		[HttpPost]
 		public JsonResult PlayOneGame()
 		{
+			// have to use this.Request["data"] instead of parameters to extract data from the post because mono
+			var data = JsonConvert.DeserializeObject<PlayOneGameData>(this.Request["data"]);
+
 			var configuration = BlockadeConfiguration.MakeConfiguration(
-				rows: 10,
-				cols: 16,
-				playersWithStartingLocation: new[]
-				{
-					Tuple.Create(this._playerProvider.GetPlayer("helmut"), Tuple.Create(0, 0)),
-					Tuple.Create(this._playerProvider.GetPlayer("fernando"), Tuple.Create(9, 15))
-				}.ToList());
+				rows: data.Rows,
+				cols: data.Cols,
+				playersWithStartingLocation: data.PlayersWithStartingPosition
+					.Select(a => Tuple.Create(this._playerProvider.GetPlayer(a.Name), a.StartingLocation))
+					.ToList());
 
 			var game = new BlockadeGame(configuration);
 			var result = game.Run();
@@ -54,6 +57,19 @@ namespace blockade.Controllers
 			{
 				Board = result.Board.To2dArray((player, turn) => Tuple.Create(player, turn))
 			});
+		}
+
+		private class PlayOneGameData
+		{
+			public int Rows { get; set; }
+			public int Cols { get; set; }
+			public PlayerWithStartingPosition[] PlayersWithStartingPosition { get; set; }
+
+			public class PlayerWithStartingPosition
+			{
+				public string Name { get; set; }
+				public Tuple<int, int> StartingLocation { get; set; }
+			}
 		}
 	}
 }
