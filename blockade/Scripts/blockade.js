@@ -43,6 +43,17 @@ function on_slider_change() {
     set_to_state(stateI, false);
 }
 
+function on_play_new_game_button() {
+	$.post(
+		"/blockade/playOneGame",
+		{ /* data goes here */ },
+		function(data) {
+			BOARD = data.Board;
+			initialize_to_new_game();
+		},
+		"json");
+}
+
 function init_slider() {
     var maxI = 0;
     for (var row = 0; row < NUM_ROWS; row++) {
@@ -59,7 +70,20 @@ function init_slider() {
     });
 }
 
-function determine_player_end_positions() {
+function init_page() {
+	init_slider();
+	$("#play-new-game-button").button()
+		.click(function(event) {
+			on_play_new_game_button();
+		});
+}
+
+function initialize_to_new_game() {
+	// need to re-init slider so it has the right range
+	init_slider();
+	for (var i = 0; i < PLAYER_END_POSITIONS.length; i++) {
+		PLAYER_END_POSITIONS[i] = 0;
+	}
     for (var row = 0; row < NUM_ROWS; row++) {
         for (var col = 0; col < NUM_COLS; col++) {
             var tuple = BOARD[row][col];
@@ -70,10 +94,10 @@ function determine_player_end_positions() {
             }
         }
     }
+    set_to_state(0, true);
 }
 
 $(document).ready(function() {
-    init_slider();
-    determine_player_end_positions();
-    set_to_state(0);
+    init_page();
+    initialize_to_new_game();
 });
