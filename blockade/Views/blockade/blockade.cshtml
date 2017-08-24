@@ -1,9 +1,22 @@
 ﻿@model blockade.BlockadeModel
 
 @using Newtonsoft.Json;
+@using System.Linq;
 
 @{
-	var boardJsonString = JsonConvert.SerializeObject(Model.Board);
+	var colors = new[]
+	{
+		new[] { new[] { 21, 25, 81 }, new[] { 104, 112, 226 } }, // blue
+		new[] { new[] { 84, 20, 20 }, new[] { 244, 97, 97 } }, // red
+		new[] { new[] { 137, 135, 24 }, new[] { 214, 212, 102 } }, // yellow
+		new[] { new[] { 19, 76, 34 }, new[] { 92, 224, 127 } }, // green
+		new[] { new[] { 64, 26, 79 }, new[] { 191, 115, 221 } }, // purple
+		new[] { new[] { 122, 94, 39 }, new[] { 219, 165, 57 } } // orange
+	};
+	
+	var playerColorsForSelector = colors
+		.Select(a => a[0].Zip(a[1], (c1, c2) => (c1 + c2 * 3) / 4).ToList())
+		.ToList();
 }
 
 <!DOCTYPE html>
@@ -17,27 +30,50 @@
 <body>
 
 <table id="board-table" class="board-blockade">
-@foreach (var row in Enumerable.Range(0, Model.Board.Length))
-{
-	@: <tr>
-	foreach (var col in Enumerable.Range(0, Model.Board[row].Length))
-	{
-		@: <td id="cell-@row-@col" />
-	}
-	@: </tr>
-}
+	@* intentionally blank; will be replaced immediately by the js *@
 </table>
 <div id="state-slider"></div>
 <button id="play-new-game-button">Play new game</button>
 
+<div id="configuration-selector">
+	<div id="rows-selector">
+		Rows: <span>10</span>
+		<div id="rows-slider" class="rows-cols-slider"></div>
+	</div>
+	<div id="cols-selector">
+		Cols: <span>10</span>
+		<div id="cols-slider" class="rows-cols-slider"></div>
+	</div>
+	<table id="player-selector-table">
+		<tr>
+		@foreach (var playerNameI in Enumerable.Range(-1, Model.PlayerNames.Length + 1))
+		{
+			<td>@(playerNameI < 0 ? string.Empty : Model.PlayerNames[playerNameI])</td>
+		}
+		</tr>
+		@foreach (var playerI in Enumerable.Range(0, 4))
+		{
+			<tr>
+			@foreach (var playerNameI in Enumerable.Range(-1, Model.PlayerNames.Length + 1))
+			{
+				if (playerNameI < 0)
+				{
+					<td style='background-color: rgb(@(string.Join(", ", playerColorsForSelector[playerI].Select(i => i.ToString()))));'></td>
+				}
+				else
+				{
+					<td>
+						<input type="radio" name="player-@playerI-radio-group" value="@(Model.PlayerNames[playerNameI])" @(playerNameI == 0 ? "checked" : string.Empty) />
+					</td>
+				}
+			}
+			</tr>
+		}
+	</table>
+</div>
+
 <script src="/Scripts/jquery-2.1.4.min.js"></script>
 <script src="/Scripts/jquery-ui.js"></script>
-
-<script>
-	var BOARD = JSON.parse('@Html.Raw(boardJsonString)');
-	var NUM_ROWS = BOARD.length;
-	var NUM_COLS = BOARD[0].length;
-</script>
 
 <script src="/Scripts/blockade.js"></script>
 

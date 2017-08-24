@@ -1,10 +1,14 @@
 
+body {
+	margin: 10px;
+}
+
 .board-blockade {
     outline: 8px solid black;
     margin: 16px;
 }
 
-td {
+.board-blockade tr td {
     width: 25px;
     height: 25px;
     outline: 2px solid black;
@@ -12,5 +16,33 @@ td {
 
 #state-slider {
     width: 400px;
+    margin: 16px;
+}
+
+#player-selector-table {
+	margin: 16px;
+}
+
+#player-selector-table tr td {
+	width: 100px;
+	height: 40px;
+	outline: 1px solid black;
+	text-align: center;
+	vertical-align: middle;
+}
+
+#player-selector-table tr:first-child {
+	background-color: #cccccc;
+	font-family: Helvetica, Arial, Sans-Serif;
+	font-size: 16px;
+	font-weight: bold;
+}
+
+#player-selector-table tr td:first-child {
+	width: 50px;
+}
+
+.rows-cols-slider {
+    width: 150px;
     margin: 16px;
 }

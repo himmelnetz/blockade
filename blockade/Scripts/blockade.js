@@ -46,15 +46,9 @@ function on_slider_change() {
 function on_play_new_game_button() {
 	$.post(
 		"/blockade/playOneGame",
-		{data: JSON.stringify({
-			Rows: 20,
-			Cols: 25,
-			PlayersWithStartingPosition: [
-				{ Name: "fernando", StartingLocation: { Item1: 0, Item2: 0 }},
-				{ Name: "helmut", StartingLocation: { Item1: 19, Item2: 24 }},
-				{ Name: "zed", StartingLocation: { Item1: 0, Item2: 24 }}
-			]
-		})},
+		{
+			data: JSON.stringify(get_configuration_from_selector())
+		},
 		function(data) {
 			BOARD = data.Board;
 			NUM_ROWS = BOARD.length;
@@ -86,6 +80,24 @@ function init_page() {
 		.click(function(event) {
 			on_play_new_game_button();
 		});
+	$("#rows-slider").slider({
+		range: "min",
+		min: 10,
+		max: 30,
+		value: 10,
+		slide: function(event, ui) {
+			$("#rows-selector>span").html(ui.value);
+		}
+	});
+	$("#cols-slider").slider({
+		range: "min",
+		min: 10,
+		max: 40,
+		value: 10,
+		slide: function(event, ui) {
+			$("#cols-selector>span").html(ui.value);
+		}
+	});
 }
 
 function initialize_to_new_game() {
@@ -123,7 +135,35 @@ function reset_board_table_dom(rows, cols) {
 	}
 }
 
+function get_configuration_from_selector() {
+	var rows = parseInt($("#rows-selector>span").html());
+	var cols = parseInt($("#cols-selector>span").html());
+	return {
+		Rows: rows,
+		Cols: cols,
+		PlayersWithStartingPosition: [
+			{ Name: $("input[name=player-0-radio-group]:checked").val(), StartingLocation: { Item1: 0, Item2: 0 }},
+			{ Name: $("input[name=player-1-radio-group]:checked").val(), StartingLocation: { Item1: rows - 1, Item2: cols - 1 }},
+			{ Name: $("input[name=player-2-radio-group]:checked").val(), StartingLocation: { Item1: rows - 1, Item2: 0 }},
+			{ Name: $("input[name=player-3-radio-group]:checked").val(), StartingLocation: { Item1: 0, Item2: cols - 1 }}
+		]
+	}
+}
+
 $(document).ready(function() {
-    init_page();
-    initialize_to_new_game();
+    // TODO MOVE THIS SOMEHOW
+	$.post(
+		"/blockade/playOneGame",
+		{
+			data: JSON.stringify(get_configuration_from_selector())
+		},
+		function(data) {
+			BOARD = data.Board;
+			NUM_ROWS = BOARD.length;
+			NUM_COLS = BOARD[0].length;
+			initialize_to_new_game();
+			init_page(); // THIS IS SPECIAL!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+		},
+		"json");
+    
 });

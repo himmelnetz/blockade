@@ -1,12 +1,14 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="blockade/Controllers/BlockadeController.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="blockade/Views/blockade/blockade.cshtml">
     <Files>
       <File FileName="blockade/BusinessLogic/Players/PlayerProvider.cs" Line="12" Column="37" />
-      <File FileName="blockade/Controllers/BlockadeController.cs" Line="38" Column="2" />
-      <File FileName="blockade/BusinessLogic/BlockadeConfiguration.cs" Line="47" Column="76" />
-      <File FileName="blockade/Utilities/Throw.cs" Line="16" Column="4" />
-      <File FileName="blockade/BusinessLogic/BlockadeGame.cs" Line="63" Column="29" />
+      <File FileName="blockade/Controllers/BlockadeController.cs" Line="23" Column="6" />
+      <File FileName="blockade/BusinessLogic/BlockadeConfiguration.cs" Line="29" Column="53" />
+      <File FileName="blockade/BusinessLogic/BlockadeGame.cs" Line="57" Column="6" />
+      <File FileName="blockade/Scripts/blockade.js" Line="125" Column="1" />
+      <File FileName="blockade/Views/blockade/blockade.cshtml" Line="24" Column="68" />
+      <File FileName="blockade/Models/BlockadeModel.cs" Line="8" Column="44" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
