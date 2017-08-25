@@ -13,6 +13,15 @@ namespace blockade
 			this._random = random;
 		}
 
+		public static BlockadePlayerDescription GetPlayerDescription()
+		{
+			return new BlockadePlayerDescription
+			{
+				Name = "Fernando",
+				Description = "Picks any random move that doesn't immediately kill itself the next turn."
+			};
+		}
+
 		public int PickMove(List<Tuple<int, int>> locations, ReadOnlyBlockadeBoard board, int turn)
 		{
 			var okayMoves = locations.Select((l, i) => Tuple.Create(l, i))

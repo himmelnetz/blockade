@@ -29,6 +29,8 @@
 </head>
 <body>
 
+<div id="left-column">
+
 <table id="board-table" class="board-blockade">
 	@* intentionally blank; will be replaced immediately by the js *@
 </table>
@@ -46,15 +48,15 @@
 	</div>
 	<table id="player-selector-table">
 		<tr>
-		@foreach (var playerNameI in Enumerable.Range(-1, Model.PlayerNames.Length + 1))
+		@foreach (var playerNameI in Enumerable.Range(-1, Model.Players.Count + 1))
 		{
-			<td>@(playerNameI < 0 ? string.Empty : Model.PlayerNames[playerNameI])</td>
+			<td>@(playerNameI < 0 ? string.Empty : Model.Players[playerNameI].Name)</td>
 		}
 		</tr>
 		@foreach (var playerI in Enumerable.Range(0, 4))
 		{
 			<tr>
-			@foreach (var playerNameI in Enumerable.Range(-1, Model.PlayerNames.Length + 1))
+			@foreach (var playerNameI in Enumerable.Range(-1, Model.Players.Count + 1))
 			{
 				if (playerNameI < 0)
 				{
@@ -63,7 +65,7 @@
 				else
 				{
 					<td>
-						<input type="radio" name="player-@playerI-radio-group" value="@(Model.PlayerNames[playerNameI])" @(playerNameI == 0 ? "checked" : string.Empty) />
+						<input type="radio" name="player-@playerI-radio-group" value="@(Model.Players[playerNameI].Name)" @(playerNameI == 0 ? "checked" : string.Empty) />
 					</td>
 				}
 			}
@@ -71,6 +73,26 @@
 		}
 	</table>
 </div>
+
+</div> @* left-column *@
+
+<div id="right-column">
+
+<table id="player-descriptions">
+	<tr>
+		<td>Name</td>
+		<td>Description</td>
+	</tr>
+	@foreach (var player in Model.Players)
+	{
+		<tr>
+			<td>@player.Name</td>
+			<td>@player.Description</td>
+		</tr>
+	}
+</table>
+
+</div> @* right-column *@
 
 <script src="/Scripts/jquery-2.1.4.min.js"></script>
 <script src="/Scripts/jquery-ui.js"></script>

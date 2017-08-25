@@ -10,6 +10,15 @@ namespace blockade
 		{
 		}
 
+		public static BlockadePlayerDescription GetPlayerDescription()
+		{
+			return new BlockadePlayerDescription
+			{
+				Name = "Helmut",
+				Description = "Uses heuristic of board after next move. Heuristic prefers locations that give the most amoung of availabe spaces nearby."
+			};
+		}
+
 		public int PickMove(List<Tuple<int, int>> locations, ReadOnlyBlockadeBoard board, int turn)
 		{
 			return locations.Select((l, i) => Tuple.Create(l, i))

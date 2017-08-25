@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace blockade
 {
@@ -33,6 +35,16 @@ namespace blockade
 				return this._helmutPlayerFactory();
 			}
 			throw new ArgumentException("Trying to get a player that doesnt exist: '" + playerName + "'");
+		}
+
+		public List<BlockadePlayerDescription> GetPlayerDescriptions()
+		{
+			return new[] 
+			{
+				ZedPlayer.GetPlayerDescription(),
+				FernandoPlayer.GetPlayerDescription(),
+				HelmutPlayer.GetPlayerDescription()
+			}.ToList();
 		}
 	}
 }

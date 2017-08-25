@@ -21,7 +21,7 @@ namespace blockade.Controllers
 		{
 			return this.View("blockade", new BlockadeModel 
 			{ 
-				PlayerNames = new[] { "Zed", "Fernando", "Helmut" }
+				Players = this._playerProvider.GetPlayerDescriptions()
 			});
 		}
 

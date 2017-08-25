@@ -3,6 +3,15 @@ body {
 	margin: 10px;
 }
 
+#left-column {
+	float: left;
+}
+
+#right-column {
+	margin-top: 20px;
+	margin-left: 20px;
+}
+
 .board-blockade {
     outline: 8px solid black;
     margin: 16px;
@@ -46,4 +55,26 @@ body {
 .rows-cols-slider {
     width: 150px;
     margin: 16px;
+}
+
+#player-descriptions tr:first-child {
+	background-color: #dddddd;
+	font-family: Helvetica, Arial, Sans-Serif;
+	font-size: 16px;
+	font-weight: bold;
+}
+
+#player-descriptions tr td {
+	padding: 8px 16px;
+	vertical-align: middle;
+	height: 40px;
+}
+
+#player-descriptions tr td:nth-child(1) {
+	width: 80px;
+	font-weight: bold;
+}
+
+#player-descriptions tr td:nth-child(2) {
+	width: 400px;
 }

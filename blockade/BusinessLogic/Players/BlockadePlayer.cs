@@ -7,5 +7,11 @@ namespace blockade
 	{
 		int PickMove(List<Tuple<int, int>> locations, ReadOnlyBlockadeBoard board, int turn);
 	}
+
+	public class BlockadePlayerDescription
+	{
+		public string Name { get; set; }
+		public string Description { get; set; }
+	}
 }
 
