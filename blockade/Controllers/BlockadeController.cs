@@ -29,7 +29,7 @@ namespace blockade.Controllers
 		public JsonResult PlayOneGame()
 		{
 			// have to use this.Request["data"] instead of parameters to extract data from the post because mono
-			var data = JsonConvert.DeserializeObject<PlayOneGameData>(this.Request["data"]);
+			var data = JsonConvert.DeserializeObject<PlayOneGameRequest>(this.Request["data"]);
 
 			var configuration = BlockadeConfiguration.MakeConfiguration(
 				rows: data.Rows,
@@ -41,13 +41,19 @@ namespace blockade.Controllers
 			var game = new BlockadeGame(configuration);
 			var result = game.Run();
 
-			return this.Json(new
+			var board = result.Board.To2dArray((player, turn) => Tuple.Create(player, turn));
+			return this.Json(new PlayOneGameResponse
 			{
-				Board = result.Board.To2dArray((player, turn) => Tuple.Create(player, turn))
+				Board = board,
+				ResultsWithFinalTurn = result.PlayerOrdering
+					.Select(playerI => Tuple.Create(playerI, board.SelectMany(row => row)
+						.Where(t => t != null && t.Item1 == playerI)
+						.Max(t => t.Item2)))
+					.ToArray()
 			});
 		}
 
-		private class PlayOneGameData
+		private class PlayOneGameRequest
 		{
 			public int Rows { get; set; }
 			public int Cols { get; set; }
@@ -58,6 +64,12 @@ namespace blockade.Controllers
 				public string Name { get; set; }
 				public Tuple<int, int> StartingLocation { get; set; }
 			}
+		}
+
+		private class PlayOneGameResponse
+		{
+			public Tuple<int, int>[][] Board { get; set; }
+			public Tuple<int, int>[] ResultsWithFinalTurn { get; set; }
 		}
 	}
 }

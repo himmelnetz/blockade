@@ -17,6 +17,22 @@
 	var playerColorsForSelector = colors
 		.Select(a => a[0].Zip(a[1], (c1, c2) => (c1 + c2) / 2).ToList())
 		.ToList();
+		
+	Func<int, string> indexToPosition = (i) =>
+	{
+		switch (i)
+		{
+			case 0: return "1st";
+			case 1: return "2nd";
+			case 2: return "3rd";
+			case 3: return "4th";
+			case 4: return "5th";
+			case 5: return "6th";
+			case 6: return "7th";
+			case 7: return "8th";
+			default: throw new ArgumentOutOfRangeException();
+		}
+	};
 }
 
 <!DOCTYPE html>
@@ -60,7 +76,7 @@
 			{
 				if (playerNameI < 0)
 				{
-					<td style='background-color: rgb(@(string.Join(", ", playerColorsForSelector[playerI].Select(i => i.ToString()))));'></td>
+					<td id="player-@playerI-color" style='background-color: rgb(@(string.Join(", ", playerColorsForSelector[playerI].Select(i => i.ToString()))));'></td>
 				}
 				else
 				{
@@ -78,6 +94,24 @@
 
 <div id="right-column">
 
+<div>Results</div>
+<table id="results-table">
+	<tr>
+		<td>Place</td>
+		<td>Player</td>
+		<td>Turn</td>
+	</tr>
+	@foreach (var resultI in Enumerable.Range(0, 4))
+	{
+		<tr>
+			<td>@(indexToPosition(resultI))</td>
+			<td id="result-td-@resultI"></td>
+			<td id="result-td-survival-@resultI"></td>
+		</tr>
+	}
+</table>
+
+<div>Player Descriptions</div>
 <table id="player-descriptions">
 	<tr>
 		<td>Name</td>

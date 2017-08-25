@@ -57,11 +57,16 @@ body {
     margin: 16px;
 }
 
-#player-descriptions tr:first-child {
+#player-descriptions {
+	margin-top: 10px;
+}
+
+#player-descriptions tr:first-child td {
 	background-color: #dddddd;
 	font-family: Helvetica, Arial, Sans-Serif;
 	font-size: 16px;
 	font-weight: bold;
+	height: 20px;
 }
 
 #player-descriptions tr td {
@@ -77,4 +82,38 @@ body {
 
 #player-descriptions tr td:nth-child(2) {
 	width: 400px;
+}
+
+#results-table {
+	margin-top: 10px;
+	margin-bottom: 40px;
+}
+
+#results-table tr:first-child td {
+	background-color: #dddddd;
+	font-family: Helvetica, Arial, Sans-Serif;
+	font-size: 16px;
+	font-weight: bold;
+	height: 20px
+}
+
+#results-table tr td {
+	padding: 8px 16px;
+	text-align: center;
+	vertical-align: middle;
+	height: 20px;
+}
+
+#results-table tr td:nth-child(1) {
+	font-family: Helvetica, Arial, Sans-Serif;
+	width: 60px;
+	font-weight: bold;
+}
+
+#results-table tr td:nth-child(2) {
+	width: 100px;
+}
+
+#results-table tr td:nth-child(3) {
+	width: 80px;
 }

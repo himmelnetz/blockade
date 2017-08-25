@@ -20,6 +20,19 @@ function set_to_state(stateI, change_slider) {
             value: stateI
         });
     }
+    for (var resultI = 0; resultI < RESULTS_WITH_FINAL_TURN.length; resultI++) {
+    	var playerI = RESULTS_WITH_FINAL_TURN[resultI].Item1;
+    	var turn = RESULTS_WITH_FINAL_TURN[resultI].Item2;
+    	if (turn <= stateI) {
+    		$("#result-td-" + resultI).html($("input[name=player-" + playerI + "-radio-group]:checked").val())
+    			.css("background-color", $("#player-" + playerI + "-color").css("background-color"));
+    		$("#result-td-survival-" + resultI).html(turn);
+    	} else {
+    		$("#result-td-" + resultI).html("")
+    			.css("background-color", "white");
+    		$("#result-td-survival-" + resultI).html("");
+    	}
+    }
 }
 
 function set_cell_color(row, col, color1, color2, mix /* range is [0.0, 1.0] */, stateI) {
@@ -76,6 +89,7 @@ function on_play_new_game_button() {
 		},
 		function(data) {
 			BOARD = data.Board;
+			RESULTS_WITH_FINAL_TURN = data.ResultsWithFinalTurn;
 			NUM_ROWS = BOARD.length;
 			NUM_COLS = BOARD[0].length;
 			initialize_to_new_game();
@@ -184,6 +198,7 @@ $(document).ready(function() {
 		},
 		function(data) {
 			BOARD = data.Board;
+			RESULTS_WITH_FINAL_TURN = data.ResultsWithFinalTurn;
 			NUM_ROWS = BOARD.length;
 			NUM_COLS = BOARD[0].length;
 			initialize_to_new_game();
