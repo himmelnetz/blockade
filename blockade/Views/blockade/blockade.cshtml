@@ -6,16 +6,16 @@
 @{
 	var colors = new[]
 	{
-		new[] { new[] { 21, 25, 81 }, new[] { 104, 112, 226 } }, // blue
-		new[] { new[] { 84, 20, 20 }, new[] { 244, 97, 97 } }, // red
-		new[] { new[] { 137, 135, 24 }, new[] { 214, 212, 102 } }, // yellow
-		new[] { new[] { 19, 76, 34 }, new[] { 92, 224, 127 } }, // green
-		new[] { new[] { 64, 26, 79 }, new[] { 191, 115, 221 } }, // purple
-		new[] { new[] { 122, 94, 39 }, new[] { 219, 165, 57 } } // orange
+		new[] { new[] { 63, 69, 154 }, new[] { 104, 112, 226 } }, // blue
+		new[] { new[] { 164, 59, 59 }, new[] { 244, 97, 97 } }, // red
+		new[] { new[] { 177, 174, 63 }, new[] { 214, 212, 102 } }, // yellow
+		new[] { new[] { 56, 150, 81 }, new[] { 92, 224, 127 } }, // green
+		new[] { new[] { 128, 71, 150 }, new[] { 191, 115, 221 } }, // purple
+		new[] { new[] { 171, 130, 48 }, new[] { 219, 165, 57 } } // orange
 	};
 	
 	var playerColorsForSelector = colors
-		.Select(a => a[0].Zip(a[1], (c1, c2) => (c1 + c2 * 3) / 4).ToList())
+		.Select(a => a[0].Zip(a[1], (c1, c2) => (c1 + c2) / 2).ToList())
 		.ToList();
 }
 
@@ -74,6 +74,10 @@
 
 <script src="/Scripts/jquery-2.1.4.min.js"></script>
 <script src="/Scripts/jquery-ui.js"></script>
+
+<script>
+	var COLORS = JSON.parse('@Html.Raw(JsonConvert.SerializeObject(colors))');
+</script>
 
 <script src="/Scripts/blockade.js"></script>
 

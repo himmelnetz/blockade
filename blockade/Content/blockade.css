@@ -6,12 +6,13 @@ body {
 .board-blockade {
     outline: 8px solid black;
     margin: 16px;
+    border-collapse: separate;
 }
 
 .board-blockade tr td {
     width: 25px;
     height: 25px;
-    outline: 2px solid black;
+    border: 2px solid black;
 }
 
 #state-slider {

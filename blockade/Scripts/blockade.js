@@ -2,25 +2,16 @@
 var LEFT_KEY_KEYCODE = 37;
 var RIGHT_KEY_KEYCODE = 39;
 
-var COLORS = [
-	[[21, 25, 81], [104, 112, 226]], // blue
-	[[84, 20, 20], [244, 97, 97]], // red
-	[[137, 135, 24], [214, 212, 102]], // yellow
-	[[19, 76, 34], [92, 224, 127]], // green
-	[[64, 26, 79], [191, 115, 221]], // purple
-	[[122, 94, 39], [219, 165, 57]] // orange
-];
-
 var PLAYER_END_POSITIONS = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
 
 function set_to_state(stateI, change_slider) {
     for (var row = 0; row < NUM_ROWS; row++) {
         for (var col = 0; col < NUM_COLS; col++) {
             var tuple = BOARD[row][col];
-            set_cell_color(row, col, [255, 255, 255], [0, 0, 0], 0.0);
+            set_cell_color(row, col, [255, 255, 255], [0, 0, 0], 0.0, stateI);
             if (tuple !== null && tuple.Item2 <= stateI) {
-                var mix = Math.min((Math.min(stateI, PLAYER_END_POSITIONS[tuple.Item1]) - tuple.Item2) / 10.0, 1.0);
-                set_cell_color(row, col, COLORS[tuple.Item1][0], COLORS[tuple.Item1][1], mix)
+                var mix = Math.min((Math.min(stateI, PLAYER_END_POSITIONS[tuple.Item1]) - tuple.Item2) / 15.0, 1.0);
+                set_cell_color(row, col, COLORS[tuple.Item1][0], COLORS[tuple.Item1][1], mix, stateI)
             }
         }
     }
@@ -31,11 +22,45 @@ function set_to_state(stateI, change_slider) {
     }
 }
 
-function set_cell_color(row, col, color1, color2, mix /* range is [0.0, 1.0] */) {
+function set_cell_color(row, col, color1, color2, mix /* range is [0.0, 1.0] */, stateI) {
 	var red = Math.round(color1[0] * (1.0 - mix) + color2[0] * mix);
 	var green = Math.round(color1[1] * (1.0 - mix) + color2[1] * mix);
 	var blue = Math.round(color1[2] * (1.0 - mix) + color2[2] * mix);
-	$("#cell-" + row + "-" + col).css("background-color", "rgb(" + red + ", " + green + ", " + blue + ")");
+	var color = "rgb(" + red + ", " + green + ", " + blue + ")";
+	$("#cell-" + row + "-" + col).css("background-color", color);
+	set_cell_border(row, col, "top", -1, 0, stateI);
+	set_cell_border(row, col, "bottom", 1, 0, stateI);
+	set_cell_border(row, col, "left", 0, -1, stateI);
+	set_cell_border(row, col, "right", 0, 1, stateI);
+}
+
+function set_cell_border(row, col, direction, drow, dcol, stateI) {
+	var thisTuple = try_get_player_and_turn(row, col, stateI);
+	var otherTuple = try_get_player_and_turn(row + drow, col + dcol, stateI);
+	var isBorderVisible = thisTuple !== null
+		&& (otherTuple === null
+			|| thisTuple.Item1 !== otherTuple.Item1
+			|| Math.abs(thisTuple.Item2 - otherTuple.Item2) !== 1
+			|| (Math.abs(thisTuple.Item2 - otherTuple.Item2) !== 1 && thisTuple.Item2 < otherTuple.Item2));
+	var cellElement = $("#cell-" + row + "-" + col);
+	if (isBorderVisible) {
+		cellElement.css("border-" + direction, "2px solid black")
+			.css("padding-" + direction, "0px");
+	} else {
+		cellElement.css("padding-" + direction, "2px")
+			.css("border-" + direction, "0px");
+	}
+}
+
+function try_get_player_and_turn(row, col, stateI) {
+	if (row < 0 || row >= NUM_ROWS || col < 0 || col >= NUM_COLS) {
+		return null;
+	}
+	var tuple = BOARD[row][col];
+	if (tuple === null) {
+		return null;
+	}
+	return tuple.Item2 <= stateI ? tuple : null;
 }
 
 function on_slider_change() {
@@ -147,7 +172,7 @@ function get_configuration_from_selector() {
 			{ Name: $("input[name=player-2-radio-group]:checked").val(), StartingLocation: { Item1: rows - 1, Item2: 0 }},
 			{ Name: $("input[name=player-3-radio-group]:checked").val(), StartingLocation: { Item1: 0, Item2: cols - 1 }}
 		]
-	}
+	};
 }
 
 $(document).ready(function() {
@@ -165,5 +190,4 @@ $(document).ready(function() {
 			init_page(); // THIS IS SPECIAL!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 		},
 		"json");
-    
 });
