@@ -85,7 +85,9 @@ function on_play_new_game_button() {
 	$.post(
 		"/blockade/playOneGame",
 		{
-			data: JSON.stringify(get_configuration_from_selector())
+			data: JSON.stringify({
+				Configuration: get_configuration_from_selector()
+			})
 		},
 		function(data) {
 			BOARD = data.Board;
@@ -93,6 +95,21 @@ function on_play_new_game_button() {
 			NUM_ROWS = BOARD.length;
 			NUM_COLS = BOARD[0].length;
 			initialize_to_new_game();
+		},
+		"json");
+}
+
+function on_play_many_games_button() {
+	$.post(
+		"/blockade/playManyGames",
+		{
+			data: JSON.stringify({
+				Configuration: get_configuration_from_selector(),
+				NumGames: 1000
+			})
+		},
+		function(data) {
+			console.log(data);
 		},
 		"json");
 }
@@ -137,6 +154,10 @@ function init_page() {
 			$("#cols-selector>span").html(ui.value);
 		}
 	});
+	$("#play-many-games-button").button()
+		.click(function(event) {
+			on_play_many_games_button();
+		});
 }
 
 function initialize_to_new_game() {
@@ -194,7 +215,9 @@ $(document).ready(function() {
 	$.post(
 		"/blockade/playOneGame",
 		{
-			data: JSON.stringify(get_configuration_from_selector())
+			data: JSON.stringify({
+				Configuration: get_configuration_from_selector()
+			})
 		},
 		function(data) {
 			BOARD = data.Board;

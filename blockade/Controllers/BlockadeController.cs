@@ -32,9 +32,9 @@ namespace blockade.Controllers
 			var data = JsonConvert.DeserializeObject<PlayOneGameRequest>(this.Request["data"]);
 
 			var configuration = BlockadeConfiguration.MakeConfiguration(
-				rows: data.Rows,
-				cols: data.Cols,
-				playersWithStartingLocation: data.PlayersWithStartingPosition
+				rows: data.Configuration.Rows,
+				cols: data.Configuration.Cols,
+				playersWithStartingLocation: data.Configuration.PlayersWithStartingPosition
 					.Select(a => Tuple.Create(this._playerProvider.GetPlayer(a.Name), a.StartingLocation))
 					.ToList());
 
@@ -52,8 +52,37 @@ namespace blockade.Controllers
 					.ToArray()
 			});
 		}
+	
+		[HttpPost]
+		public JsonResult PlayManyGames()
+		{
+			// have to use this.Request["data"] instead of parameters to extract data from the post because mono
+			var data = JsonConvert.DeserializeObject<PlayManyGamesRequest>(this.Request["data"]);
 
-		private class PlayOneGameRequest
+			var configuration = BlockadeConfiguration.MakeConfiguration(
+				rows: data.Configuration.Rows,
+				cols: data.Configuration.Cols,
+				playersWithStartingLocation: data.Configuration.PlayersWithStartingPosition
+					.Select(a => Tuple.Create(this._playerProvider.GetPlayer(a.Name), a.StartingLocation))
+					.ToList());
+
+			// todo parallel?
+			var results = Enumerable.Range(0, data.NumGames)
+				.Select(_ => new BlockadeGame(configuration).Run())
+				.ToList();
+
+			return this.Json(new PlayManyGamesResult
+			{
+				//WinPercentage = results.GroupBy(r => r.PlayerOrdering[0])
+				//	.Select(g => g.Count() * 1.0 / data.NumGames)
+				//	.ToArray()
+				WinPercentage = Enumerable.Range(0, configuration.Players.Count)
+					.Select(i => results.Count(r => r.PlayerOrdering[0] == i) * 1.0 / data.NumGames)
+					.ToArray()
+			});
+		}
+
+		private class GameConfigurationRequest
 		{
 			public int Rows { get; set; }
 			public int Cols { get; set; }
@@ -66,10 +95,26 @@ namespace blockade.Controllers
 			}
 		}
 
+		private class PlayOneGameRequest
+		{
+			public GameConfigurationRequest Configuration { get; set; }
+		}
+
 		private class PlayOneGameResponse
 		{
 			public Tuple<int, int>[][] Board { get; set; }
 			public Tuple<int, int>[] ResultsWithFinalTurn { get; set; }
+		}
+
+		private class PlayManyGamesRequest
+		{
+			public GameConfigurationRequest Configuration { get; set; }
+			public int NumGames { get; set; }
+		}
+
+		private class PlayManyGamesResult
+		{
+			public double[] WinPercentage { get; set; }
 		}
 	}
 }
