@@ -73,9 +73,6 @@ namespace blockade.Controllers
 
 			return this.Json(new PlayManyGamesResult
 			{
-				//WinPercentage = results.GroupBy(r => r.PlayerOrdering[0])
-				//	.Select(g => g.Count() * 1.0 / data.NumGames)
-				//	.ToArray()
 				WinPercentage = Enumerable.Range(0, configuration.Players.Count)
 					.Select(i => results.Count(r => r.PlayerOrdering[0] == i) * 1.0 / data.NumGames)
 					.ToArray()

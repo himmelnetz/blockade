@@ -45,13 +45,11 @@
 </head>
 <body>
 
-<div id="left-column">
+<table><tr><td id="left-column">
 
-<table id="board-table" class="board-blockade">
-	@* intentionally blank; will be replaced immediately by the js *@
-</table>
-<div id="state-slider"></div>
-<button id="play-new-game-button">Play new game</button>
+@**************************@
+@* CONFIGURATION SELECTOR *@
+@**************************@
 
 <div id="configuration-selector">
 	<div id="rows-selector">
@@ -90,9 +88,40 @@
 	</table>
 </div>
 
-</div> @* left-column *@
+@***********************@
+@* PLAYER DESCRIPTIONS *@
+@***********************@
 
-<div id="right-column">
+<div>Player Descriptions</div>
+<table id="player-descriptions">
+	<tr>
+		<td>Name</td>
+		<td>Description</td>
+	</tr>
+	@foreach (var player in Model.Players)
+	{
+		<tr>
+			<td>@player.Name</td>
+			<td>@player.Description</td>
+		</tr>
+	}
+</table>
+
+@**************************@
+@**************************@
+@**************************@
+
+</td><td id="right-column">
+
+@***************@
+@* GAME VIEWER *@
+@***************@
+
+<table id="board-table" class="board-blockade">
+	@* intentionally blank; will be replaced immediately by the js *@
+</table>
+<div id="state-slider"></div>
+<button id="play-new-game-button">Play new game</button>
 
 <div>Results</div>
 <table id="results-table">
@@ -111,24 +140,17 @@
 	}
 </table>
 
-<div>Player Descriptions</div>
-<table id="player-descriptions">
-	<tr>
-		<td>Name</td>
-		<td>Description</td>
-	</tr>
-	@foreach (var player in Model.Players)
-	{
-		<tr>
-			<td>@player.Name</td>
-			<td>@player.Description</td>
-		</tr>
-	}
-</table>
+@*********************@
+@* MANY GAMES RUNNER *@
+@*********************@
 
 <button id="play-many-games-button">Play many games</button>
 
-</div> @* right-column *@
+@**************************@
+@**************************@
+@**************************@
+
+</td></tr></table>
 
 <script src="/Scripts/jquery-2.1.4.min.js"></script>
 <script src="/Scripts/jquery-ui.js"></script>

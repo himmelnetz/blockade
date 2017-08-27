@@ -4,12 +4,12 @@ body {
 }
 
 #left-column {
-	float: left;
+/*	float: left;*/
 }
 
 #right-column {
-	margin-top: 20px;
-	margin-left: 20px;
+/*	margin-top: 20px;
+	margin-left: 20px;*/
 }
 
 .board-blockade {

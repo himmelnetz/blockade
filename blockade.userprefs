@@ -1,10 +1,10 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="blockade/Controllers/BlockadeController.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="blockade/Scripts/blockade.js">
     <Files>
-      <File FileName="blockade/Controllers/BlockadeController.cs" Line="54" Column="4" />
-      <File FileName="blockade/Scripts/blockade.js" Line="43" Column="48" />
-      <File FileName="blockade/Views/blockade/blockade.cshtml" Line="108" Column="32" />
+      <File FileName="blockade/Controllers/BlockadeController.cs" Line="78" Column="16" />
+      <File FileName="blockade/Scripts/blockade.js" Line="116" Column="1" />
+      <File FileName="blockade/Views/blockade/blockade.cshtml" Line="129" Column="52" />
       <File FileName="blockade/Content/blockade.css" Line="98" Column="2" />
     </Files>
   </MonoDevelop.Ide.Workbench>
