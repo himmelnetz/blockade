@@ -1,9 +1,4 @@
 
-var LEFT_KEY_KEYCODE = 37;
-var RIGHT_KEY_KEYCODE = 39;
-
-var PLAYER_END_POSITIONS = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
-
 ////////////////////////////////////////////////////////////////////////////////
 // REMOTE BLOCKADE SERVICE /////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
@@ -48,8 +43,7 @@ var RemoteBlockadeService = function(configuration_selector_component) {
 // BLOCKADE BOARD COMPONENT ////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
-var BlockadeBoardComponent = function() {
-	// might want to SCREAMING_SNAKE these after eliminating the current screaming globals
+var BlockadeBoardComponent = function(color_provider) {
 	var Rows, Cols;
 	
 	var init_component = function() {
@@ -73,27 +67,35 @@ var BlockadeBoardComponent = function() {
 			table.appendChild(tr);
 		}
 	};
+	
+	var set_to_board = function(board, stateI, player_end_positions) {
+	    for (var row = 0; row < board.length; row++) {
+	        for (var col = 0; col < board[0].length; col++) {
+	        	var player = board[row][col].player;
+	        	var turn = board[row][col].turn;
+	        	var mix = player !== -1 && turn <= stateI
+	        		? Math.min((Math.min(stateI, player_end_positions[player]) - turn) / 15.0, 1.0)
+	        		: 0.0;
+	        	var color = turn <= stateI
+					? color_provider.get_player_mix_color_rgb_string(player, mix)
+					: "white";
+				$("#cell-" + row + "-" + col).css("background-color", color);
+				_set_cell_border(board, row, col, "top", -1, 0, stateI);
+				_set_cell_border(board, row, col, "bottom", 1, 0, stateI);
+				_set_cell_border(board, row, col, "left", 0, -1, stateI);
+				_set_cell_border(board, row, col, "right", 0, 1, stateI);
+	        }
+	    }
+	}
 
-	var set_cell_color = function(row, col, color1, color2, mix /* range is [0.0, 1.0] */, stateI) {
-		var red = Math.round(color1[0] * (1.0 - mix) + color2[0] * mix);
-		var green = Math.round(color1[1] * (1.0 - mix) + color2[1] * mix);
-		var blue = Math.round(color1[2] * (1.0 - mix) + color2[2] * mix);
-		var color = "rgb(" + red + ", " + green + ", " + blue + ")";
-		$("#cell-" + row + "-" + col).css("background-color", color);
-		_set_cell_border(row, col, "top", -1, 0, stateI);
-		_set_cell_border(row, col, "bottom", 1, 0, stateI);
-		_set_cell_border(row, col, "left", 0, -1, stateI);
-		_set_cell_border(row, col, "right", 0, 1, stateI);
-	};
-
-	var _set_cell_border = function(row, col, direction, drow, dcol, stateI) {
-		var thisTuple = _try_get_player_and_turn(row, col, stateI);
-		var otherTuple = _try_get_player_and_turn(row + drow, col + dcol, stateI);
-		var isBorderVisible = thisTuple !== null
-			&& (otherTuple === null
-				|| thisTuple.Item1 !== otherTuple.Item1
-				|| Math.abs(thisTuple.Item2 - otherTuple.Item2) !== 1
-				|| (Math.abs(thisTuple.Item2 - otherTuple.Item2) !== 1 && thisTuple.Item2 < otherTuple.Item2));
+	var _set_cell_border = function(board, row, col, direction, drow, dcol, stateI) {
+		var thisCell = _try_get_player_and_turn(board, row, col, stateI);
+		var otherCell = _try_get_player_and_turn(board, row + drow, col + dcol, stateI);
+		var isBorderVisible = thisCell.player !== -1
+			&& (otherCell.player === -1
+				|| thisCell.player !== otherCell.player
+				|| Math.abs(thisCell.turn - otherCell.turn) !== 1
+				|| (Math.abs(thisCell.turn - otherCell.turn) !== 1 && thisCell.turn < otherCell.turn));
 		var cellElement = $("#cell-" + row + "-" + col);
 		if (isBorderVisible) {
 			cellElement.css("border-" + direction, "2px solid black")
@@ -104,21 +106,19 @@ var BlockadeBoardComponent = function() {
 		}
 	};
 
-	var _try_get_player_and_turn = function(row, col, stateI) {
-		if (row < 0 || row >= NUM_ROWS || col < 0 || col >= NUM_COLS) {
-			return null;
+	var _try_get_player_and_turn = function(board, row, col, stateI) {
+		if (row < 0 || row >= Rows || col < 0 || col >= Cols) {
+			return { player: -1, turn: -1 };
 		}
-		var tuple = BOARD[row][col];
-		if (tuple === null) {
-			return null;
-		}
-		return tuple.Item2 <= stateI ? tuple : null;
+		return board[row][col].turn <= stateI
+			? board[row][col]
+			: { player: -1, turn: -1 };
 	};
 	
 	return {
 		init_component: init_component,
 		reset_to_new_rows_cols: reset_to_new_rows_cols,
-		set_cell_color: set_cell_color
+		set_to_board: set_to_board
 	};
 }
 
@@ -126,7 +126,12 @@ var BlockadeBoardComponent = function() {
 // GAME VIEWER COMPONENT ///////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
-var GameViewerComponent = function(remote_blockade_service, blockade_board_component) {
+var GameViewerComponent = function(remote_blockade_service, blockade_board_component, color_provider) {
+	var Board = [[]];
+	var Result_With_Final_Turn = [];
+	// like in other places, this is currently hard coded to 4
+	var Player_End_Positions = [0, 0, 0, 0];
+
 	var init_component = function() {
 		$("#play-new-game-button").button()
 			.click(function(event) {
@@ -137,11 +142,14 @@ var GameViewerComponent = function(remote_blockade_service, blockade_board_compo
 	
 	var _on_play_new_game_button = function() {
 		remote_blockade_service.play_one_game(function(data) {
-			BOARD = data.Board;
-			RESULTS_WITH_FINAL_TURN = data.ResultsWithFinalTurn;
-			NUM_ROWS = BOARD.length;
-			NUM_COLS = BOARD[0].length;
-			blockade_board_component.reset_to_new_rows_cols(NUM_ROWS, NUM_COLS);
+			Board = _apply_func_over_board(data.Board, function(tuple) {
+			   		return {
+			   			player: tuple !== null ? tuple.Item1 : -1,
+			   			turn: tuple !== null ? tuple.Item2 : -1
+			   		};
+			   	});
+			Result_With_Final_Turn = data.ResultsWithFinalTurn;
+			blockade_board_component.reset_to_new_rows_cols(Board.length, Board[0].length);
 			_reset_to_new_game();
 		});
 	};
@@ -149,19 +157,14 @@ var GameViewerComponent = function(remote_blockade_service, blockade_board_compo
 	var _reset_to_new_game = function() {
 		// need to re-init slider so it has the right range
 		_reset_slider();
-		for (var i = 0; i < PLAYER_END_POSITIONS.length; i++) {
-			PLAYER_END_POSITIONS[i] = 0;
+		for (var i = 0; i < Player_End_Positions.length; i++) {
+			Player_End_Positions[i] = 0;
 		}
-	    for (var row = 0; row < NUM_ROWS; row++) {
-	        for (var col = 0; col < NUM_COLS; col++) {
-	            var tuple = BOARD[row][col];
-	            if (tuple != null) {
-	            	var player = tuple.Item1;
-	            	var turn = tuple.Item2;
-	            	PLAYER_END_POSITIONS[player] = Math.max(PLAYER_END_POSITIONS[player], turn);
-	            }
-	        }
-	    }
+		_apply_func_over_board(Board, function(cell) {
+			if (cell.player !== -1) {
+				Player_End_Positions[cell.player] = Math.max(Player_End_Positions[cell.player], cell.turn);
+			}
+		});
 	    _set_to_state(0, true);
 	};
 	
@@ -172,13 +175,11 @@ var GameViewerComponent = function(remote_blockade_service, blockade_board_compo
 	
 	var _reset_slider = function() {
 	    var maxI = 0;
-	    for (var row = 0; row < NUM_ROWS; row++) {
-	        for (var col = 0; col < NUM_COLS; col++) {
-	            if (BOARD[row][col] !== null) {
-	                maxI = Math.max(maxI, BOARD[row][col].Item2)
-	            }
-	        }
-	    }
+	    _apply_func_over_board(Board, function(cell) {
+	    	if (cell.player !== -1) {
+	    		maxI = Math.max(maxI, cell.turn)
+	    	}
+	    });
 	    $("#state-slider").slider({
 	        max: maxI,
 	        slide: _on_slider_change,
@@ -186,28 +187,31 @@ var GameViewerComponent = function(remote_blockade_service, blockade_board_compo
 	    });
 	};
 	
+	var _apply_func_over_board = function(board, func) {
+		var newBoard = [];
+		for (var row = 0; row < board.length; row++) {
+			var newRow = [];
+			for (var col = 0; col < board[0].length; col++) {
+				newRow.push(func(board[row][col]));
+			}
+			newBoard.push(newRow);
+		}
+		return newBoard;
+	}
+	
 	var _set_to_state = function(stateI, change_slider) {
-	    for (var row = 0; row < NUM_ROWS; row++) {
-	        for (var col = 0; col < NUM_COLS; col++) {
-	            var tuple = BOARD[row][col];
-	            blockade_board_component.set_cell_color(row, col, [255, 255, 255], [0, 0, 0], 0.0, stateI);
-	            if (tuple !== null && tuple.Item2 <= stateI) {
-	                var mix = Math.min((Math.min(stateI, PLAYER_END_POSITIONS[tuple.Item1]) - tuple.Item2) / 15.0, 1.0);
-	                blockade_board_component.set_cell_color(row, col, COLORS[tuple.Item1][0], COLORS[tuple.Item1][1], mix, stateI)
-	            }
-	        }
-	    }
+	   	blockade_board_component.set_to_board(Board, stateI, Player_End_Positions);
 	    if (change_slider) {
 	        $("#state-slider").slider({
 	            value: stateI
 	        });
 	    }
-	    for (var resultI = 0; resultI < RESULTS_WITH_FINAL_TURN.length; resultI++) {
-	    	var playerI = RESULTS_WITH_FINAL_TURN[resultI].Item1;
-	    	var turn = RESULTS_WITH_FINAL_TURN[resultI].Item2;
+	    for (var resultI = 0; resultI < Result_With_Final_Turn.length; resultI++) {
+	    	var player_i = Result_With_Final_Turn[resultI].Item1;
+	    	var turn = Result_With_Final_Turn[resultI].Item2;
 	    	if (turn <= stateI) {
-	    		$("#result-td-" + resultI).html($("input[name=player-" + playerI + "-radio-group]:checked").val())
-	    			.css("background-color", $("#player-" + playerI + "-color").css("background-color"));
+	    		$("#result-td-" + resultI).html($("input[name=player-" + player_i + "-radio-group]:checked").val())
+	    			.css("background-color", color_provider.get_player_main_color_rgb_string(player_i));
 	    		$("#result-td-survival-" + resultI).html(turn);
 	    	} else {
 	    		$("#result-td-" + resultI).html("")
@@ -299,8 +303,9 @@ var PlayManyGamesComponent = function(remote_blockade_service) {
 var BlockadePage = function() {
 	var configuration_selector_component = ConfigurationSelectorComponent();
 	var remote_blockade_service = RemoteBlockadeService(configuration_selector_component);
-	var blockade_board_component = BlockadeBoardComponent();
-	var game_viewer_component = GameViewerComponent(remote_blockade_service, blockade_board_component);
+	var color_provider = ColorProvider();
+	var blockade_board_component = BlockadeBoardComponent(color_provider);
+	var game_viewer_component = GameViewerComponent(remote_blockade_service, blockade_board_component, color_provider);
 	var play_many_games_component = PlayManyGamesComponent(remote_blockade_service);
 	
 	var _init_page = function() {
@@ -325,10 +330,6 @@ var BlockadePage = function() {
 ////////////////////////////////////////////////////////////////////////////////
 
 $(document).ready(function() {
-	BOARD = [[]];
-	NUM_ROWS = 0;
-	NUM_COLS = 0;
-
 	var blockade_page = BlockadePage();
 	blockade_page.on_document_ready();
 });

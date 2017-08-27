@@ -16,7 +16,7 @@
 	
 	var playerColorsForSelector = colors
 		.Select(a => a[0].Zip(a[1], (c1, c2) => (c1 + c2) / 2).ToList())
-		.ToList();
+		.ToArray();
 		
 	Func<int, string> indexToPosition = (i) =>
 	{
@@ -156,7 +156,36 @@
 <script src="/Scripts/jquery-ui.js"></script>
 
 <script>
-	var COLORS = JSON.parse('@Html.Raw(JsonConvert.SerializeObject(colors))');
+	var ColorProvider = function() {
+		var Colors = JSON.parse('@Html.Raw(JsonConvert.SerializeObject(colors))');
+		var Single_Colors = JSON.parse('@Html.Raw(JsonConvert.SerializeObject(playerColorsForSelector))');
+		
+		var _tuple_to_rgb_string = function(tuple) {
+			return "rgb(" + tuple[0] + ", " + tuple[1] + ", " + tuple[2] + ")";
+		};
+		
+		var get_player_main_color_rgb_string = function(player_i) {
+			return _tuple_to_rgb_string(player_i >= 0
+				? Single_Colors[player_i]
+				: [255, 255, 255]);
+		};
+		
+		var get_player_mix_color_rgb_string = function(player_i, decay_factor /* [0.0, 1.0] */) {
+			if (player_i < 0) {
+				return _tuple_to_rgb_string([255, 255, 255]);
+			}
+			
+			var red = Math.round(Colors[player_i][0][0] * (1.0 - decay_factor) + Colors[player_i][1][0] * decay_factor);
+			var green = Math.round(Colors[player_i][0][1] * (1.0 - decay_factor) + Colors[player_i][1][1] * decay_factor);
+			var blue = Math.round(Colors[player_i][0][2] * (1.0 - decay_factor) + Colors[player_i][1][2] * decay_factor);
+			return _tuple_to_rgb_string([red, green, blue]);
+		};
+		
+		return {
+			get_player_main_color_rgb_string: get_player_main_color_rgb_string,
+			get_player_mix_color_rgb_string: get_player_mix_color_rgb_string
+		};
+	};
 </script>
 
 <script src="/Scripts/blockade.js"></script>
