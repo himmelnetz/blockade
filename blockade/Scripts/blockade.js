@@ -23,8 +23,8 @@ var RemoteBlockadeService = function(configuration_selector_component) {
 			"/blockade/playManyGames",
 			{
 				data: JSON.stringify({
-					Configuration: get_configuration_from_selector(),
-					NumGames: 1000
+					Configuration: configuration_selector_component.get_configuration(),
+					NumGames: 100
 				})
 			},
 			function(data) {
@@ -287,8 +287,17 @@ var PlayManyGamesComponent = function(remote_blockade_service) {
 	
 	var _on_play_many_games_button = function() {
 		remote_blockade_service.play_many_games(function(data) {
-			console.log(data);
+			_set_to_new_win_percentages(data.WinPercentages);
 		});
+	};
+	
+	var _set_to_new_win_percentages = function(win_percentages) {
+		for (var playerI = 0; playerI < win_percentages.length; playerI++) {
+			for (var resultI = 0; resultI < win_percentages[0].length; resultI++) {
+				$("#play-many-games-result-player-" + playerI + "-result-" + resultI)
+					.html(Math.round(win_percentages[playerI][resultI] * 100) + "%");
+			}
+		}
 	};
 	
 	return {

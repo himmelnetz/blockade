@@ -3,15 +3,6 @@ body {
 	margin: 10px;
 }
 
-#left-column {
-/*	float: left;*/
-}
-
-#right-column {
-/*	margin-top: 20px;
-	margin-left: 20px;*/
-}
-
 .board-blockade {
     outline: 8px solid black;
     margin: 16px;
@@ -29,11 +20,11 @@ body {
     margin: 16px;
 }
 
-#player-selector-table {
+.player-table {
 	margin: 16px;
 }
 
-#player-selector-table tr td {
+.player-table tr td {
 	width: 100px;
 	height: 40px;
 	outline: 1px solid black;
@@ -41,14 +32,14 @@ body {
 	vertical-align: middle;
 }
 
-#player-selector-table tr:first-child {
+.player-table tr:first-child {
 	background-color: #cccccc;
 	font-family: Helvetica, Arial, Sans-Serif;
 	font-size: 16px;
 	font-weight: bold;
 }
 
-#player-selector-table tr td:first-child {
+.player-table tr td:first-child {
 	width: 50px;
 }
 

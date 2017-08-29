@@ -73,8 +73,10 @@ namespace blockade.Controllers
 
 			return this.Json(new PlayManyGamesResult
 			{
-				WinPercentage = Enumerable.Range(0, configuration.Players.Count)
-					.Select(i => results.Count(r => r.PlayerOrdering[0] == i) * 1.0 / data.NumGames)
+				WinPercentages = Enumerable.Range(0, configuration.Players.Count)
+					.Select(playerI => Enumerable.Range(0, configuration.Players.Count)
+						.Select(resultI => results.Count(r => r.PlayerOrdering[resultI] == playerI) * 1.0 / data.NumGames)
+						.ToArray())
 					.ToArray()
 			});
 		}
@@ -111,7 +113,8 @@ namespace blockade.Controllers
 
 		private class PlayManyGamesResult
 		{
-			public double[] WinPercentage { get; set; }
+			// [player][position]
+			public double[][] WinPercentages { get; set; }
 		}
 	}
 }

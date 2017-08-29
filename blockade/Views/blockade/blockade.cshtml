@@ -4,6 +4,8 @@
 @using System.Linq;
 
 @{
+	const int NUM_OF_CURRENT_PLAYERS = 4;
+
 	var colors = new[]
 	{
 		new[] { new[] { 63, 69, 154 }, new[] { 104, 112, 226 } }, // blue
@@ -45,7 +47,40 @@
 </head>
 <body>
 
-<table><tr><td id="left-column">
+@***************@
+@* GAME VIEWER *@
+@***************@
+
+<table><tr><td>
+
+<table id="board-table" class="board-blockade">
+	@* intentionally blank; will be replaced immediately by the js *@
+</table>
+<div id="state-slider"></div>
+<button id="play-new-game-button">Play new game</button>
+
+</td><td>
+
+<div>Results</div>
+<table id="results-table">
+	<tr>
+		<td>Place</td>
+		<td>Player</td>
+		<td>Turn</td>
+	</tr>
+	@foreach (var resultI in Enumerable.Range(0, NUM_OF_CURRENT_PLAYERS))
+	{
+		<tr>
+			<td>@(indexToPosition(resultI))</td>
+			<td id="result-td-@resultI"></td>
+			<td id="result-td-survival-@resultI"></td>
+		</tr>
+	}
+</table>
+
+</td></tr></table>
+
+<table><tr><td>
 
 @**************************@
 @* CONFIGURATION SELECTOR *@
@@ -60,14 +95,14 @@
 		Cols: <span>10</span>
 		<div id="cols-slider" class="rows-cols-slider"></div>
 	</div>
-	<table id="player-selector-table">
+	<table id="player-selector-table" class="player-table">
 		<tr>
 		@foreach (var playerNameI in Enumerable.Range(-1, Model.Players.Count + 1))
 		{
 			<td>@(playerNameI < 0 ? string.Empty : Model.Players[playerNameI].Name)</td>
 		}
 		</tr>
-		@foreach (var playerI in Enumerable.Range(0, 4))
+		@foreach (var playerI in Enumerable.Range(0, NUM_OF_CURRENT_PLAYERS))
 		{
 			<tr>
 			@foreach (var playerNameI in Enumerable.Range(-1, Model.Players.Count + 1))
@@ -87,6 +122,8 @@
 		}
 	</table>
 </div>
+
+</td><td>
 
 @***********************@
 @* PLAYER DESCRIPTIONS *@
@@ -111,40 +148,39 @@
 @**************************@
 @**************************@
 
-</td><td id="right-column">
-
-@***************@
-@* GAME VIEWER *@
-@***************@
-
-<table id="board-table" class="board-blockade">
-	@* intentionally blank; will be replaced immediately by the js *@
-</table>
-<div id="state-slider"></div>
-<button id="play-new-game-button">Play new game</button>
-
-<div>Results</div>
-<table id="results-table">
-	<tr>
-		<td>Place</td>
-		<td>Player</td>
-		<td>Turn</td>
-	</tr>
-	@foreach (var resultI in Enumerable.Range(0, 4))
-	{
-		<tr>
-			<td>@(indexToPosition(resultI))</td>
-			<td id="result-td-@resultI"></td>
-			<td id="result-td-survival-@resultI"></td>
-		</tr>
-	}
-</table>
+</td></tr></table>
 
 @*********************@
 @* MANY GAMES RUNNER *@
 @*********************@
 
-<button id="play-many-games-button">Play many games</button>
+<div id="many-game-runner">
+	<button id="play-many-games-button">Play many games</button>
+	<table id="many-game-result-table" class="player-table">
+		<tr>
+		@foreach (var resultI in Enumerable.Range(-1, NUM_OF_CURRENT_PLAYERS + 1))
+		{
+			<td>@(resultI >= 0 ? indexToPosition(resultI) : string.Empty)</td>
+		}
+		</tr>
+		@foreach (var playerI in Enumerable.Range(0, NUM_OF_CURRENT_PLAYERS))
+		{
+			<tr>
+			@foreach (var resultI in Enumerable.Range(-1, NUM_OF_CURRENT_PLAYERS + 1))
+			{
+				if (resultI < 0)
+				{
+					<td style='background-color: rgb(@(string.Join(", ", playerColorsForSelector[playerI].Select(i => i.ToString()))));'></td>
+				}
+				else
+				{
+					<td id="play-many-games-result-player-@playerI-result-@resultI"></td>
+				}
+			}
+			</tr>
+		}
+	</table>
+</div>
 
 @**************************@
 @**************************@
