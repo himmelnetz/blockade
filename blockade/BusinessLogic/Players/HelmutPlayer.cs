@@ -8,13 +8,16 @@ namespace blockade
 	{
 		private readonly BoardCalculator _boardCalculator;
 		private readonly SingleLevelMoveEvaluator _singleLevelMoveEvaluator;
+		private readonly Random _random;
 
 		public HelmutPlayer(
 			BoardCalculator boardCalculator,
-			SingleLevelMoveEvaluator singleLevelMoveEvaluator)
+			SingleLevelMoveEvaluator singleLevelMoveEvaluator,
+			Random random)
 		{
 			this._boardCalculator = boardCalculator;
 			this._singleLevelMoveEvaluator = singleLevelMoveEvaluator;
+			this._random = random;
 		}
 
 		public static BlockadePlayerDescription GetPlayerDescription()
@@ -28,7 +31,11 @@ namespace blockade
 
 		public int PickMove(List<Move> moves, ReadOnlyBlockadeState state)
 		{
-			return this._singleLevelMoveEvaluator.PickBestMove(moves, state, new HelmutBlockadeHeuristic(this._boardCalculator));
+			var tuple = this._singleLevelMoveEvaluator.PickBestMove(moves, state, new HelmutBlockadeHeuristic(this._boardCalculator));
+			return tuple != null
+				? tuple.Item1
+				// all moves kill me, so pick a random one
+				: this._random.Next(moves.Count);
 		}
 
 		private class HelmutBlockadeHeuristic : IBlockadeHeuristic
@@ -39,6 +46,9 @@ namespace blockade
 			{
 				this._boardCalculator = boardCalculator;
 			}
+
+			public double WinScore { get { return 100.0; } }
+			public double LossScore { get { return -100.0; } }
 
 			public double EvaluateState(ReadOnlyBlockadeState state, int player)
 			{

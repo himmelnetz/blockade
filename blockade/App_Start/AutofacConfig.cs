@@ -19,6 +19,7 @@ namespace blockade
 			builder.RegisterType<BlockadeGame>().InstancePerDependency();
 			builder.RegisterType<BoardCalculator>().InstancePerDependency();
 			builder.RegisterType<SingleLevelMoveEvaluator>().InstancePerDependency();
+			builder.RegisterType<SimpleMultiLevelMoveEvaluator>().InstancePerDependency();
 
 			// we have to explicitly register the controller because for some reason autofac's RegisterControllers isnt working right
 			builder.RegisterType<BlockadeController>();

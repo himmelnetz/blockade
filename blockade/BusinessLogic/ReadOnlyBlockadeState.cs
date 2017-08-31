@@ -38,6 +38,11 @@ namespace blockade
 		{
 			return this._state.GetCurrentLocationOfPlayer(player);
 		}
+
+		public bool IsGameOver()
+		{
+			return this._state.IsGameOver();
+		}
 	}
 }
 

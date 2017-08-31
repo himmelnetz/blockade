@@ -13,14 +13,15 @@ namespace blockade
 			this._boardCalculator = boardCalculator;
 		}
 
-		public int PickBestMove(List<Move> moves, ReadOnlyBlockadeState state, IBlockadeHeuristic blockadeHeuristic)
+		public Tuple<int, double> PickBestMove(List<Move> moves, ReadOnlyBlockadeState state, IBlockadeHeuristic blockadeHeuristic)
 		{
 			return moves.Select((move, i) => new { nextState = state.MakeMove(move), move, i })
 				.Where(a => this._boardCalculator.GetD1Neighbors(a.nextState, a.move.Location, distance: 1)
 					.Where(l => !a.nextState.GetCell(l).Player.HasValue)
 					.Any())
-				.OrderByDescending(a => blockadeHeuristic.EvaluateState(a.nextState, state.CurrentPlayer))
-				.Select(a => a.i)
+				.Select(a => Tuple.Create(blockadeHeuristic.EvaluateState(a.nextState, state.CurrentPlayer), a.i))
+				.OrderByDescending(t => t)
+				.Select(t => Tuple.Create(t.Item2, t.Item1))
 				.FirstOrDefault();
 		}
 	}
