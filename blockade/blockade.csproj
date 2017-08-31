@@ -89,11 +89,8 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Controllers\BlockadeController.cs" />
-    <Compile Include="BusinessLogic\BlockadeBoard.cs" />
     <Compile Include="BusinessLogic\BlockadeGame.cs" />
     <Compile Include="BusinessLogic\BlockadeResult.cs" />
-    <Compile Include="BusinessLogic\ReadOnlyBlockadeBoard.cs" />
-    <Compile Include="BusinessLogic\Players\BlockadePlayer.cs" />
     <Compile Include="BusinessLogic\Players\FernandoPlayer.cs" />
     <Compile Include="BusinessLogic\Players\HelmutPlayer.cs" />
     <Compile Include="BusinessLogic\Players\ZedPlayer.cs" />
@@ -102,6 +99,13 @@
     <Compile Include="App_Start\AutofacConfig.cs" />
     <Compile Include="BusinessLogic\BlockadeConfiguration.cs" />
     <Compile Include="Utilities\Throw.cs" />
+    <Compile Include="BusinessLogic\Players\IBlockadePlayer.cs" />
+    <Compile Include="BusinessLogic\Players\SophiePlayer.cs" />
+    <Compile Include="BusinessLogic\Players\IBlockadeHeuristic.cs" />
+    <Compile Include="BusinessLogic\Players\SingleLevelMoveEvaluator.cs" />
+    <Compile Include="BusinessLogic\BlockadeState.cs" />
+    <Compile Include="BusinessLogic\ReadOnlyBlockadeState.cs" />
+    <Compile Include="BusinessLogic\BoardCalculator.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\Web.config" />

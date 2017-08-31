@@ -3,9 +3,9 @@ using System.Collections.Generic;
 
 namespace blockade
 {
-	public interface BlockadePlayer
+	public interface IBlockadePlayer
 	{
-		int PickMove(List<Tuple<int, int>> locations, ReadOnlyBlockadeBoard board, int turn);
+		int PickMove(List<Move> moves, ReadOnlyBlockadeState state);
 	}
 
 	public class BlockadePlayerDescription

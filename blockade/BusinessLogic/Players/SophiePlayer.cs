@@ -3,27 +3,24 @@ using System.Collections.Generic;
 
 namespace blockade
 {
-	public class ZedPlayer : IBlockadePlayer
+	public class SophiePlayer : IBlockadePlayer
 	{
-		private readonly Random _random;
-
-		public ZedPlayer(Random random)
+		public SophiePlayer()
 		{
-			this._random = random;
 		}
 
 		public static BlockadePlayerDescription GetPlayerDescription()
 		{
 			return new BlockadePlayerDescription
 			{
-				Name = "Zed",
-				Description = "Plays completely randomly."
+				Name = "Sophie",
+				Description = "STILL IN DEVELOPMENT"
 			};
 		}
 
 		public int PickMove(List<Move> moves, ReadOnlyBlockadeState state)
 		{
-			return this._random.Next(moves.Count);
+			return 0;
 		}
 	}
 }

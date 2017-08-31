@@ -20,7 +20,7 @@ namespace blockade
 			this._helmutPlayerFactory = helmutPlayerFactory;
 		}
 
-		public BlockadePlayer GetPlayer(string playerName)
+		public IBlockadePlayer GetPlayer(string playerName)
 		{
 			if (StringComparer.OrdinalIgnoreCase.Equals(playerName, "zed"))
 			{

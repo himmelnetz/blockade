@@ -8,13 +8,13 @@ namespace blockade
 	{
 		public int Rows { get; private set; }
 		public int Cols { get; private set; }
-		public List<BlockadePlayer> Players { get; private set; }
+		public List<IBlockadePlayer> Players { get; private set; }
 		public List<Tuple<int, int>> StartingLocations { get; private set; }
 
 		private BlockadeConfiguration(
 			int rows,
 			int cols,
-			IEnumerable<BlockadePlayer> players,
+			IEnumerable<IBlockadePlayer> players,
 			IEnumerable<Tuple<int, int>> startingLocations)
 		{
 			this.Rows = rows;
@@ -26,7 +26,7 @@ namespace blockade
 		public static bool TryMakeConfiguration(
 			int rows,
 			int cols,
-			List<Tuple<BlockadePlayer, Tuple<int, int>>> playersWithStartingLocation,
+			List<Tuple<IBlockadePlayer, Tuple<int, int>>> playersWithStartingLocation,
 			out BlockadeConfiguration blockadeConfiguration)
 		{
 			try
@@ -44,7 +44,7 @@ namespace blockade
 		public static BlockadeConfiguration MakeConfiguration(
 			int rows,
 			int cols,
-			List<Tuple<BlockadePlayer, Tuple<int, int>>> playersWithStartingLocation)
+			List<Tuple<IBlockadePlayer, Tuple<int, int>>> playersWithStartingLocation)
 		{
 			Throw.IfOutOfRange(rows, 1, 30, "rows");
 			Throw.IfOutOfRange(cols, 1, 50, "cols");

@@ -4,7 +4,7 @@ namespace blockade
 {
 	public static class Throw
 	{
-		public static void If(bool condition, string message)
+		public static void If(bool condition, string message = "")
 		{
 			if (condition) 
 			{
@@ -12,7 +12,15 @@ namespace blockade
 			}
 		}
 
-		public static void IfNull(object value, string message)
+		public static void InvalidIf(bool condition, string message = "")
+		{
+			if (condition) 
+			{
+				throw new InvalidOperationException(message);
+			}
+		}
+
+		public static void IfNull(object value, string message = "")
 		{
 			if (value == null)
 			{
@@ -20,7 +28,7 @@ namespace blockade
 			}
 		}
 
-		public static void IfOutOfRange(int value, int lo, int hi, string message)
+		public static void IfOutOfRange(int value, int lo, int hi, string message = "")
 		{
 			if (value < lo || value >= hi) 
 			{

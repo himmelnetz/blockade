@@ -4,13 +4,17 @@ using System.Linq;
 
 namespace blockade
 {
-	public class FernandoPlayer : BlockadePlayer
+	public class FernandoPlayer : IBlockadePlayer
 	{
 		private readonly Random _random;
+		private readonly BoardCalculator _boardCalculator;
 
-		public FernandoPlayer(Random random)
+		public FernandoPlayer(
+			Random random,
+			BoardCalculator boardCalculator)
 		{
 			this._random = random;
+			this._boardCalculator = boardCalculator;
 		}
 
 		public static BlockadePlayerDescription GetPlayerDescription()
@@ -22,12 +26,20 @@ namespace blockade
 			};
 		}
 
-		public int PickMove(List<Tuple<int, int>> locations, ReadOnlyBlockadeBoard board, int turn)
+		public int PickMove(List<Move> moves, ReadOnlyBlockadeState state)
 		{
-			var okayMoves = locations.Select((l, i) => Tuple.Create(l, i))
-				.Where(t => board.GetMovesFromLocation(t.Item1).Any())
-					.Select(t => t.Item2)
-					.ToList();
+			var okayMoves = moves.Select((m, i) => 
+				{
+					var nextState = state.MakeMove(m);
+					return this._boardCalculator.GetD1Neighbors(nextState, m.Location, distance: 1)
+							.Where(l => !nextState.GetCell(l).Player.HasValue)
+							.Any()
+						? i
+						: default(int?);
+				})
+				.Where(i => i.HasValue)
+				.Select(i => i.Value)
+				.ToList();
 			return okayMoves.Count > 0
 				? okayMoves[this._random.Next(okayMoves.Count)]
 				: 0;

@@ -11,10 +11,14 @@ namespace blockade.Controllers
 	public class BlockadeController : Controller
 	{
 		private readonly PlayerProvider _playerProvider;
+		private readonly BlockadeGame.Factory _blockadeGameFactory;
 
-		public BlockadeController(PlayerProvider playerProvider)
+		public BlockadeController(
+			PlayerProvider playerProvider,
+			BlockadeGame.Factory blockadeGameFactory)
 		{
 			this._playerProvider = playerProvider;
+			this._blockadeGameFactory = blockadeGameFactory;
 		}
 
 		public ActionResult Index()
@@ -38,17 +42,17 @@ namespace blockade.Controllers
 					.Select(a => Tuple.Create(this._playerProvider.GetPlayer(a.Name), a.StartingLocation))
 					.ToList());
 
-			var game = new BlockadeGame(configuration);
+			var game = this._blockadeGameFactory(configuration);
 			var result = game.Run();
 
-			var board = result.Board.To2dArray((player, turn) => Tuple.Create(player, turn));
 			return this.Json(new PlayOneGameResponse
 			{
-				Board = board,
-				ResultsWithFinalTurn = result.PlayerOrdering
-					.Select(playerI => Tuple.Create(playerI, board.SelectMany(row => row)
-						.Where(t => t != null && t.Item1 == playerI)
-						.Max(t => t.Item2)))
+				Board = result.Board,
+				ResultsWithFinalTurn = result.FinalOrdering
+					.Select(playerI => Tuple.Create(playerI, result.Board.SelectMany(row => row)
+						.Where(c => c.Player == playerI)
+						.Select(c => c.Turn.Value)
+						.Max()))
 					.ToArray()
 			});
 		}
@@ -68,14 +72,14 @@ namespace blockade.Controllers
 
 			// todo parallel?
 			var results = Enumerable.Range(0, data.NumGames)
-				.Select(_ => new BlockadeGame(configuration).Run())
+				.Select(_ => this._blockadeGameFactory(configuration).Run())
 				.ToList();
 
 			return this.Json(new PlayManyGamesResult
 			{
 				WinPercentages = Enumerable.Range(0, configuration.Players.Count)
 					.Select(playerI => Enumerable.Range(0, configuration.Players.Count)
-						.Select(resultI => results.Count(r => r.PlayerOrdering[resultI] == playerI) * 1.0 / data.NumGames)
+						.Select(resultI => results.Count(r => r.FinalOrdering[resultI] == playerI) * 1.0 / data.NumGames)
 						.ToArray())
 					.ToArray()
 			});
@@ -101,7 +105,7 @@ namespace blockade.Controllers
 
 		private class PlayOneGameResponse
 		{
-			public Tuple<int, int>[][] Board { get; set; }
+			public Cell[][] Board { get; set; }
 			public Tuple<int, int>[] ResultsWithFinalTurn { get; set; }
 		}
 

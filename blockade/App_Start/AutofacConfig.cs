@@ -13,7 +13,12 @@ namespace blockade
 			builder.RegisterType<ZedPlayer>().InstancePerDependency();
 			builder.RegisterType<FernandoPlayer>().InstancePerDependency();
 			builder.RegisterType<HelmutPlayer>().InstancePerDependency();
+			builder.RegisterType<SophiePlayer>().InstancePerDependency();
 			builder.RegisterType<PlayerProvider>().InstancePerDependency();
+			builder.RegisterType<BlockadeState.BlockadeStateFactory>().InstancePerDependency();
+			builder.RegisterType<BlockadeGame>().InstancePerDependency();
+			builder.RegisterType<BoardCalculator>().InstancePerDependency();
+			builder.RegisterType<SingleLevelMoveEvaluator>().InstancePerDependency();
 
 			// we have to explicitly register the controller because for some reason autofac's RegisterControllers isnt working right
 			builder.RegisterType<BlockadeController>();

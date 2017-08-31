@@ -4,10 +4,17 @@ using System.Linq;
 
 namespace blockade
 {
-	public class HelmutPlayer : BlockadePlayer
+	public class HelmutPlayer : IBlockadePlayer
 	{
-		public HelmutPlayer()
+		private readonly BoardCalculator _boardCalculator;
+		private readonly SingleLevelMoveEvaluator _singleLevelMoveEvaluator;
+
+		public HelmutPlayer(
+			BoardCalculator boardCalculator,
+			SingleLevelMoveEvaluator singleLevelMoveEvaluator)
 		{
+			this._boardCalculator = boardCalculator;
+			this._singleLevelMoveEvaluator = singleLevelMoveEvaluator;
 		}
 
 		public static BlockadePlayerDescription GetPlayerDescription()
@@ -15,29 +22,32 @@ namespace blockade
 			return new BlockadePlayerDescription
 			{
 				Name = "Helmut",
-				Description = "Uses heuristic of board after next move. Heuristic prefers locations that give the most amoung of availabe spaces nearby."
+				Description = "Maximizes heuristic of board after next move. Heuristic prefers locations that give the most amount of availabe spaces nearby."
 			};
 		}
 
-		public int PickMove(List<Tuple<int, int>> locations, ReadOnlyBlockadeBoard board, int turn)
+		public int PickMove(List<Move> moves, ReadOnlyBlockadeState state)
 		{
-			return locations.Select((l, i) => Tuple.Create(l, i))
-				// immediately dont consider any moves with no moves next turn
-				.Where(t => board.GetMovesFromLocation(t.Item1).Any())
-					// use heuristic to evaluate moves
-					// TODO PLAYER HERE IS WRONG
-					.OrderByDescending(t => this.EvaluateBoard(t.Item1, board.CloneAndPlacePlayer(t.Item1, player: 0, turn: turn)))
-					.Select(t => t.Item2)
-					.FirstOrDefault();
+			return this._singleLevelMoveEvaluator.PickBestMove(moves, state, new HelmutBlockadeHeuristic(this._boardCalculator));
 		}
 
-		private int EvaluateBoard(Tuple<int, int> location, ReadOnlyBlockadeBoard board)
+		private class HelmutBlockadeHeuristic : IBlockadeHeuristic
 		{
-			var weights = new[] { 20, 15, 10 };
-			return weights.Select((weight, i) => 
-			                      board.GetD1Neighbors(location, distance: i + 1)
-			                      .Sum(l => (board.GetPlayerAtLocation(l).HasValue ? -1 : 1) * weight))
-				.Sum();
+			private readonly BoardCalculator _boardCalculator;
+
+			public HelmutBlockadeHeuristic(BoardCalculator boardCalculator)
+			{
+				this._boardCalculator = boardCalculator;
+			}
+
+			public double EvaluateState(ReadOnlyBlockadeState state, int player)
+			{
+				var weights = new[] { 20, 15, 10 };
+				return weights.Select((weight, i) => 
+					this._boardCalculator.GetD1Neighbors(state, state.GetCurrentLocationOfPlayer(player), distance: i + 1)
+						.Sum(l => (state.GetCell(l).Player.HasValue ? -1 : 1) * weight))
+					.Sum();
+			}
 		}
 	}
 }

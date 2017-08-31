@@ -142,10 +142,10 @@ var GameViewerComponent = function(remote_blockade_service, blockade_board_compo
 	
 	var _on_play_new_game_button = function() {
 		remote_blockade_service.play_one_game(function(data) {
-			Board = _apply_func_over_board(data.Board, function(tuple) {
+			Board = _apply_func_over_board(data.Board, function(cell) {
 			   		return {
-			   			player: tuple !== null ? tuple.Item1 : -1,
-			   			turn: tuple !== null ? tuple.Item2 : -1
+			   			player: cell.Player !== null ? cell.Player : -1,
+			   			turn: cell.Turn !== null ? cell.Turn : -1
 			   		};
 			   	});
 			Result_With_Final_Turn = data.ResultsWithFinalTurn;
