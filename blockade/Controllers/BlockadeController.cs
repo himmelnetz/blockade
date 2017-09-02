@@ -5,6 +5,7 @@ using System.Web;
 using System.IO;
 using System.Web.Mvc;
 using Newtonsoft.Json;
+using System.Diagnostics;
 
 namespace blockade.Controllers
 {
@@ -70,10 +71,15 @@ namespace blockade.Controllers
 					.Select(a => Tuple.Create(this._playerProvider.GetPlayer(a.Name), a.StartingLocation))
 					.ToList());
 
+			var stopwatch = new Stopwatch();
+			stopwatch.Start();
+
 			// todo parallel?
 			var results = Enumerable.Range(0, data.NumGames)
 				.Select(_ => this._blockadeGameFactory(configuration).Run())
 				.ToList();
+
+			stopwatch.Stop();
 
 			return this.Json(new PlayManyGamesResult
 			{
@@ -81,7 +87,9 @@ namespace blockade.Controllers
 					.Select(playerI => Enumerable.Range(0, configuration.Players.Count)
 						.Select(resultI => results.Count(r => r.FinalOrdering[resultI] == playerI) * 1.0 / data.NumGames)
 						.ToArray())
-					.ToArray()
+					.ToArray(),
+				NumGamesPlayed = data.NumGames,
+				TimeTakenSeconds = stopwatch.Elapsed.TotalSeconds
 			});
 		}
 
@@ -119,6 +127,8 @@ namespace blockade.Controllers
 		{
 			// [player][position]
 			public double[][] WinPercentages { get; set; }
+			public int NumGamesPlayed { get; set; }
+			public double TimeTakenSeconds { get; set; }
 		}
 	}
 }

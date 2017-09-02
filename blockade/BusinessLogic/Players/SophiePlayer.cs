@@ -41,8 +41,8 @@ namespace blockade
 				this._boardCalculator = boardCalculator;
 			}
 
-			public double WinScore { get { return 10000.0; } }
-			public double LossScore { get { return -10000.0; } }
+			public double WinScore { get { return 1000.0; } }
+			public double LossScore { get { return -1000.0; } }
 
 			public double EvaluateState(ReadOnlyBlockadeState state, int player)
 			{

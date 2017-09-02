@@ -1,21 +1,10 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="blockade/BusinessLogic/BlockadeState.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="blockade/Scripts/blockade.js">
     <Files>
-      <File FileName="blockade/BusinessLogic/Players/IBlockadePlayer.cs" Line="8" Column="16" />
-      <File FileName="blockade/BusinessLogic/Players/IBlockadeHeuristic.cs" Line="9" Column="2" />
-      <File FileName="blockade/BusinessLogic/Players/HelmutPlayer.cs" Line="36" Column="5" />
-      <File FileName="blockade/BusinessLogic/Players/SingleLevelMoveEvaluator.cs" Line="15" Column="13" />
-      <File FileName="blockade/BusinessLogic/ReadOnlyBlockadeState.cs" Line="20" Column="3" />
-      <File FileName="blockade/BusinessLogic/BlockadeBoard.cs" Line="49" Column="82" />
-      <File FileName="blockade/BusinessLogic/BlockadeGame.cs" Line="19" Column="4" />
-      <File FileName="blockade/BusinessLogic/BlockadeState.cs" Line="140" Column="52" />
-      <File FileName="blockade/BusinessLogic/BlockadeResult.cs" Line="17" Column="48" />
-      <File FileName="blockade/Utilities/Throw.cs" Line="19" Column="40" />
-      <File FileName="blockade/BusinessLogic/Players/FernandoPlayer.cs" Line="36" Column="6" />
-      <File FileName="blockade/BusinessLogic/Players/ZedPlayer.cs" Line="30" Column="1" />
-      <File FileName="blockade/BusinessLogic/Players/SophiePlayer.cs" Line="9" Column="4" />
-      <File FileName="blockade/Controllers/BlockadeController.cs" Line="78" Column="60" />
+      <File FileName="blockade/Views/blockade/blockade.cshtml" Line="185" Column="49" />
+      <File FileName="blockade/Controllers/BlockadeController.cs" Line="86" Column="21" />
+      <File FileName="blockade/Scripts/blockade.js" Line="304" Column="2" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
