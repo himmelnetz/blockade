@@ -12,6 +12,17 @@ namespace blockade
 
 		public IEnumerable<Location> GetD1Neighbors(ReadOnlyBlockadeState state, Location location, int distance)
 		{
+			if (distance == 1)
+			{
+				return new[]
+				{
+					Location.Create(location.Row - 1, location.Col),
+					Location.Create(location.Row + 1, location.Col),
+					Location.Create(location.Row, location.Col - 1),
+					Location.Create(location.Row, location.Col + 1)
+				}.Where(l => this.IsLocationOnBoard(state, l));
+			}
+
 			return Enumerable.Range(0, distance + 1)
 				.Select(x => Tuple.Create(x, distance - x))
 				.SelectMany(t => new[] { t, Tuple.Create(-t.Item1, t.Item2), Tuple.Create(t.Item1, -t.Item2), Tuple.Create(-t.Item1, -t.Item2) })

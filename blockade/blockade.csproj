@@ -107,6 +107,7 @@
     <Compile Include="BusinessLogic\ReadOnlyBlockadeState.cs" />
     <Compile Include="BusinessLogic\BoardCalculator.cs" />
     <Compile Include="BusinessLogic\Players\SimpleMultiLevelMoveEvaluator.cs" />
+    <Compile Include="Utilities\MyProfiler.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\Web.config" />

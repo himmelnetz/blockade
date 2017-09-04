@@ -21,6 +21,9 @@ namespace blockade
 			builder.RegisterType<SingleLevelMoveEvaluator>().InstancePerDependency();
 			builder.RegisterType<SimpleMultiLevelMoveEvaluator>().InstancePerDependency();
 
+			// needs to be single instance to work properly
+			builder.RegisterType<MyProfiler>().SingleInstance();
+
 			// we have to explicitly register the controller because for some reason autofac's RegisterControllers isnt working right
 			builder.RegisterType<BlockadeController>();
 		}

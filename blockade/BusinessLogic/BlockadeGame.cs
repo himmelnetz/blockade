@@ -27,8 +27,10 @@ namespace blockade
 			while (!state.IsGameOver())
 			{
 				var moves = state.GetMoves().ToList();
-				var moveI = this._configuration.Players[state.CurrentPlayer]
-					.PickMove(moves, state.AsReadOnly());
+				var moveI = moves.Count > 1
+					? this._configuration.Players[state.CurrentPlayer]
+						.PickMove(moves, state.AsReadOnly())
+					: 0;
 				state.MakeMove(moves[moveI]);
 			}
 

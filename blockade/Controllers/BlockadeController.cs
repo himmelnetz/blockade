@@ -13,13 +13,16 @@ namespace blockade.Controllers
 	{
 		private readonly PlayerProvider _playerProvider;
 		private readonly BlockadeGame.Factory _blockadeGameFactory;
+		private readonly MyProfiler _myProfiler;
 
 		public BlockadeController(
 			PlayerProvider playerProvider,
-			BlockadeGame.Factory blockadeGameFactory)
+			BlockadeGame.Factory blockadeGameFactory,
+			MyProfiler myProfiler)
 		{
 			this._playerProvider = playerProvider;
 			this._blockadeGameFactory = blockadeGameFactory;
+			this._myProfiler = myProfiler;
 		}
 
 		public ActionResult Index()
@@ -73,6 +76,7 @@ namespace blockade.Controllers
 
 			var stopwatch = new Stopwatch();
 			stopwatch.Start();
+			this._myProfiler.ClearAllData();
 
 			// todo parallel?
 			var results = Enumerable.Range(0, data.NumGames)
@@ -89,7 +93,8 @@ namespace blockade.Controllers
 						.ToArray())
 					.ToArray(),
 				NumGamesPlayed = data.NumGames,
-				TimeTakenSeconds = stopwatch.Elapsed.TotalSeconds
+				TimeTakenSeconds = stopwatch.Elapsed.TotalSeconds,
+				ProfilerData = this._myProfiler.GetAllData()
 			});
 		}
 
@@ -129,6 +134,7 @@ namespace blockade.Controllers
 			public double[][] WinPercentages { get; set; }
 			public int NumGamesPlayed { get; set; }
 			public double TimeTakenSeconds { get; set; }
+			public List<MyProfiler.ProfilerData> ProfilerData { get; set; }
 		}
 	}
 }

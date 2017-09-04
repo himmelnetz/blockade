@@ -36,7 +36,6 @@ namespace blockade
 			this._turn = turn;
 		}
 
-		// use BlockadeStateFactory
 		private static BlockadeState CreateFromConfiguration(
 			BlockadeConfiguration configuration,
 			BoardCalculator boardCalculator)
@@ -240,7 +239,6 @@ namespace blockade
 
 		public static Cell MakeOccupiedCell(int player, int turn)
 		{
-			// may want to consider caching instances so we dont swamp memory with a bunch of identical objects
 			return new Cell(player, turn);
 		}
 
