@@ -278,6 +278,9 @@ var ConfigurationSelectorComponent = function() {
 ////////////////////////////////////////////////////////////////////////////////
 
 var PlayManyGamesComponent = function(remote_blockade_service) {
+	var _victory_color = [160, 160, 160];
+	var _loss_color = [255, 255, 255];
+
 	var init_component = function() {
 		$("#play-many-games-button").button()
 			.click(function(event) {
@@ -297,11 +300,21 @@ var PlayManyGamesComponent = function(remote_blockade_service) {
 	var _set_to_new_win_percentages = function(win_percentages) {
 		for (var playerI = 0; playerI < win_percentages.length; playerI++) {
 			for (var resultI = 0; resultI < win_percentages[0].length; resultI++) {
+				var win_percentage = win_percentages[playerI][resultI];
 				$("#play-many-games-result-player-" + playerI + "-result-" + resultI)
-					.html(Math.round(win_percentages[playerI][resultI] * 100) + "%");
+					.html(Math.round(win_percentage * 100) + "%")
+					.css("background-color", _get_win_percentage_color(win_percentage));
 			}
 		}
 	};
+	
+	var _get_win_percentage_color = function(win_percentage) {
+		var adjusted_win_percentage = 1 - Math.pow(1 - win_percentage, 2);
+		var red = Math.round(_victory_color[0] * adjusted_win_percentage + _loss_color[0] * (1 - adjusted_win_percentage));
+		var green = Math.round(_victory_color[1] * adjusted_win_percentage + _loss_color[1] * (1 - adjusted_win_percentage));
+		var blue = Math.round(_victory_color[2] * adjusted_win_percentage + _loss_color[2] * (1 - adjusted_win_percentage));
+		return "rgb(" + red + ", " + green + ", " + blue + ")";
+	}
 	
 	return {
 		init_component: init_component
