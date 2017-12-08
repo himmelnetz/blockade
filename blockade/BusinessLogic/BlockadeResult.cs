@@ -10,12 +10,12 @@ namespace blockade
 	public class BlockadeResult
 	{
 		public IReadOnlyList<int> FinalOrdering { get; private set; }
-		public Cell[][] Board { get; private set; }
+		public Grid<Cell> Board { get; private set; }
 
-		public BlockadeResult (IEnumerable<int> finalOrdering, Cell[][] board)
+		public BlockadeResult (IEnumerable<int> finalOrdering, Grid<Cell> board)
 		{
 			this.FinalOrdering = finalOrdering.ToList();
-			this.Board = board;
+			this.Board = board.Clone();
 		}
 	}
 }

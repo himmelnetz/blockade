@@ -51,9 +51,9 @@ namespace blockade.Controllers
 
 			return this.Json(new PlayOneGameResponse
 			{
-				Board = result.Board,
+				Board = ConvertMultidimensionalArray(result.Board.To2dArray()),
 				ResultsWithFinalTurn = result.FinalOrdering
-					.Select(playerI => Tuple.Create(playerI, result.Board.SelectMany(row => row)
+					.Select(playerI => Tuple.Create(playerI, result.Board.Enumerate((_, cell) => cell)
 						.Where(c => c.Player == playerI)
 						.Select(c => c.Turn.Value)
 						.Max()))
@@ -96,6 +96,17 @@ namespace blockade.Controllers
 				TimeTakenSeconds = stopwatch.Elapsed.TotalSeconds,
 				ProfilerData = this._myProfiler.GetAllData()
 			});
+		}
+
+		private static T[][] ConvertMultidimensionalArray<T>(T[,] input)
+		{
+			var rows = input.GetLength(0);
+			var cols = input.GetLength(1);
+			return Enumerable.Range(0, rows)
+				.Select(row => Enumerable.Range(0, cols)
+					.Select(col => input[row, col])
+					.ToArray())
+				.ToArray();
 		}
 
 		private class GameConfigurationRequest

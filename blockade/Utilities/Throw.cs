@@ -28,9 +28,9 @@ namespace blockade
 			}
 		}
 
-		public static void IfOutOfRange(int value, int lo, int hi, string message = "")
+		public static void IfOutOfRange(int value, int? lo, int? hi, string message = "")
 		{
-			if (value < lo || value >= hi) 
+			if ((lo.HasValue && value < lo.Value) || (hi.HasValue && value >= hi.Value))
 			{
 				throw new ArgumentOutOfRangeException(message);
 			}

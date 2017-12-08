@@ -108,6 +108,7 @@
     <Compile Include="BusinessLogic\BoardCalculator.cs" />
     <Compile Include="BusinessLogic\Players\SimpleMultiLevelMoveEvaluator.cs" />
     <Compile Include="Utilities\MyProfiler.cs" />
+    <Compile Include="Utilities\Grid.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\Web.config" />

@@ -8,21 +8,21 @@ namespace blockade
 	{
 		private readonly BoardCalculator _boardCalculator;
 
-		private readonly Cell[][] _board;
+		private readonly Grid<Cell> _board;
 		private readonly Location[] _playerLocations;
 		private readonly List<int> _finalResults;
 
 		private int _currentPlayer;
 		private int _turn;
 
-		public int Rows { get { return this._board.Length; } }
-		public int Cols { get { return this._board[0].Length; } }
+		public int Rows { get { return this._board.Rows; } }
+		public int Cols { get { return this._board.Cols; } }
 
 		public int CurrentPlayer { get { return this._currentPlayer; } }
 
 		private BlockadeState(
 			BoardCalculator boardCalculator,
-			Cell[][] board,
+			Grid<Cell> board,
 			Location[] playerLocations,
 			List<int> finalResults,
 			int currentPlayer,
@@ -40,11 +40,7 @@ namespace blockade
 			BlockadeConfiguration configuration,
 			BoardCalculator boardCalculator)
 		{
-			var board = Enumerable.Range(0, configuration.Rows)
-				.Select(row => Enumerable.Range(0, configuration.Cols)
-					.Select(col => Cell.EmptyCell)
-					.ToArray())
-				.ToArray();
+			var board = Grid.Create(configuration.Rows, configuration.Cols, (row, col) => Cell.EmptyCell);
 			var playerLocations = configuration.StartingLocations
 				.Select(t => Location.Create(t.Item1, t.Item2))
 				.ToArray();
@@ -56,7 +52,7 @@ namespace blockade
 			foreach (var i in Enumerable.Range(0, playerLocations.Length))
 			{
 				var location = playerLocations[i];
-				board[location.Row][location.Col] = Cell.MakeOccupiedCell(player: i, turn: 0);
+				board[location] = Cell.MakeOccupiedCell(player: i, turn: 0);
 			}
 
 			return new BlockadeState(boardCalculator, board, playerLocations, finalResults, currentPlayer, turn);
@@ -65,7 +61,7 @@ namespace blockade
 		public BlockadeState Clone()
 		{
 			// these rely on the underlying values (cell, location) to be immutable
-			var newBoard = this.GetBoard();
+			var newBoard = this._board.Clone();
 			var newPlayerLocations = this._playerLocations.ToArray();
 			var newFinalResults = this._finalResults.ToList();
 
@@ -77,7 +73,7 @@ namespace blockade
 			Throw.InvalidIf(this.IsGameOver(), "game is over");
 
 			return this._boardCalculator.GetD1Neighbors(this.AsReadOnly(), this._playerLocations[this._currentPlayer], distance: 1)
-				.Where(l => !this._board[l.Row][l.Col].Player.HasValue)
+				.Where(location => !this._board[location].Player.HasValue)
 				.Select(Move.Create);
 		}
 
@@ -85,7 +81,7 @@ namespace blockade
 		{
 			Throw.InvalidIf(this.IsGameOver(), "game is over");
 
-			this._board[move.Location.Row][move.Location.Col] = Cell.MakeOccupiedCell(this._currentPlayer, this._turn);
+			this._board[move.Location] = Cell.MakeOccupiedCell(this._currentPlayer, this._turn);
 			this._playerLocations[this._currentPlayer] = move.Location;
 
 			var originalPlayer = this._currentPlayer;
@@ -134,7 +130,7 @@ namespace blockade
 
 			return new BlockadeResult(
 				finalOrdering: this._finalResults.AsEnumerable().Reverse(),
-				board: this.GetBoard());
+				board: this._board);
 		}
 
 		public ReadOnlyBlockadeState AsReadOnly()
@@ -142,14 +138,9 @@ namespace blockade
 			return new ReadOnlyBlockadeState(this);
 		}
 
-		public Cell[][] GetBoard()
-		{
-			return this._board.Select(r => r.ToArray()).ToArray();
-		}
-
 		public Cell GetCell(Location location)
 		{
-			return this._board[location.Row][location.Col];
+			return this._board[location];
 		}
 
 		public Location GetCurrentLocationOfPlayer(int player)
