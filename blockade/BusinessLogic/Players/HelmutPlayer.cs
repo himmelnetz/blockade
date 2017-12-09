@@ -6,16 +6,13 @@ namespace blockade
 {
 	public class HelmutPlayer : IBlockadePlayer
 	{
-		private readonly BoardCalculator _boardCalculator;
 		private readonly SingleLevelMoveEvaluator _singleLevelMoveEvaluator;
 		private readonly Random _random;
 
 		public HelmutPlayer(
-			BoardCalculator boardCalculator,
 			SingleLevelMoveEvaluator singleLevelMoveEvaluator,
 			Random random)
 		{
-			this._boardCalculator = boardCalculator;
 			this._singleLevelMoveEvaluator = singleLevelMoveEvaluator;
 			this._random = random;
 		}
@@ -31,7 +28,7 @@ namespace blockade
 
 		public int PickMove(List<Move> moves, ReadOnlyBlockadeState state)
 		{
-			var tuple = this._singleLevelMoveEvaluator.PickBestMove(moves, state, new HelmutBlockadeHeuristic(this._boardCalculator));
+			var tuple = this._singleLevelMoveEvaluator.PickBestMove(moves, state, new HelmutBlockadeHeuristic());
 			return tuple != null
 				? tuple.Item1
 				// all moves kill me, so pick a random one
@@ -40,11 +37,8 @@ namespace blockade
 
 		private class HelmutBlockadeHeuristic : IBlockadeHeuristic
 		{
-			private readonly BoardCalculator _boardCalculator;
-
-			public HelmutBlockadeHeuristic(BoardCalculator boardCalculator)
+			public HelmutBlockadeHeuristic()
 			{
-				this._boardCalculator = boardCalculator;
 			}
 
 			public double WinScore { get { return 100.0; } }
@@ -54,7 +48,8 @@ namespace blockade
 			{
 				var weights = new[] { 20, 15, 10 };
 				return weights.Select((weight, i) => 
-					this._boardCalculator.GetD1Neighbors(state, state.GetCurrentLocationOfPlayer(player), distance: i + 1)
+					state.GetBoardCalculator()
+						.GetD1Neighbors(state.GetCurrentLocationOfPlayer(player), distance: i + 1)
 						.Sum(l => (state.GetCell(l).Player.HasValue ? -1 : 1) * weight))
 					.Sum();
 			}

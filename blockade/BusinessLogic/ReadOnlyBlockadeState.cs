@@ -8,6 +8,9 @@ namespace blockade
 	{
 		private readonly BlockadeState _state;
 
+		// for saving instances of calculators once created
+		private BoardCalculator _boardCalculator;
+
 		public ReadOnlyBlockadeState(BlockadeState state)
 		{
 			this._state = state;
@@ -42,6 +45,15 @@ namespace blockade
 		public bool IsGameOver()
 		{
 			return this._state.IsGameOver();
+		}
+
+		public BoardCalculator GetBoardCalculator()
+		{
+			if (this._boardCalculator == null)
+			{
+				this._boardCalculator = this._state.GetBoardCalculator();
+			}
+			return this._boardCalculator;
 		}
 	}
 }

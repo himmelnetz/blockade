@@ -6,17 +6,14 @@ namespace blockade
 {
 	public class SingleLevelMoveEvaluator
 	{
-		private readonly BoardCalculator _boardCalculator;
-
-		public SingleLevelMoveEvaluator(BoardCalculator boardCalculator)
+		public SingleLevelMoveEvaluator()
 		{
-			this._boardCalculator = boardCalculator;
 		}
 
 		public Tuple<int, double> PickBestMove(List<Move> moves, ReadOnlyBlockadeState state, IBlockadeHeuristic blockadeHeuristic)
 		{
 			return moves.Select((move, i) => new { nextState = state.MakeMove(move), move, i })
-				.Where(a => this._boardCalculator.GetD1Neighbors(a.nextState, a.move.Location, distance: 1)
+				.Where(a => a.nextState.GetBoardCalculator().GetD1Neighbors(a.move.Location, distance: 1)
 					.Where(l => !a.nextState.GetCell(l).Player.HasValue)
 					.Any())
 				.Select(a => Tuple.Create(blockadeHeuristic.EvaluateState(a.nextState, state.CurrentPlayer), a.i))

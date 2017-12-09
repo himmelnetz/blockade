@@ -6,7 +6,7 @@ namespace blockade
 {
 	public class BlockadeState
 	{
-		private readonly BoardCalculator _boardCalculator;
+		private readonly BoardCalculator.Factory _boardCalculatorFactory;
 
 		private readonly Grid<Cell> _board;
 		private readonly Location[] _playerLocations;
@@ -21,14 +21,14 @@ namespace blockade
 		public int CurrentPlayer { get { return this._currentPlayer; } }
 
 		private BlockadeState(
-			BoardCalculator boardCalculator,
+			BoardCalculator.Factory boardCalculatorFactory,
 			Grid<Cell> board,
 			Location[] playerLocations,
 			List<int> finalResults,
 			int currentPlayer,
 			int turn)
 		{
-			this._boardCalculator = boardCalculator;
+			this._boardCalculatorFactory = boardCalculatorFactory;
 			this._board = board;
 			this._playerLocations = playerLocations;
 			this._finalResults = finalResults;
@@ -38,7 +38,7 @@ namespace blockade
 
 		private static BlockadeState CreateFromConfiguration(
 			BlockadeConfiguration configuration,
-			BoardCalculator boardCalculator)
+			BoardCalculator.Factory boardCalculatorFactory)
 		{
 			var board = Grid.Create(configuration.Rows, configuration.Cols, (row, col) => Cell.EmptyCell);
 			var playerLocations = configuration.StartingLocations
@@ -55,7 +55,7 @@ namespace blockade
 				board[location] = Cell.MakeOccupiedCell(player: i, turn: 0);
 			}
 
-			return new BlockadeState(boardCalculator, board, playerLocations, finalResults, currentPlayer, turn);
+			return new BlockadeState(boardCalculatorFactory, board, playerLocations, finalResults, currentPlayer, turn);
 		}
 
 		public BlockadeState Clone()
@@ -65,14 +65,15 @@ namespace blockade
 			var newPlayerLocations = this._playerLocations.ToArray();
 			var newFinalResults = this._finalResults.ToList();
 
-			return new BlockadeState(this._boardCalculator, newBoard, newPlayerLocations, newFinalResults, this._currentPlayer, this._turn);
+			return new BlockadeState(this._boardCalculatorFactory, newBoard, newPlayerLocations, newFinalResults, this._currentPlayer, this._turn);
 		}
 
 		public IEnumerable<Move> GetMoves()
 		{
 			Throw.InvalidIf(this.IsGameOver(), "game is over");
 
-			return this._boardCalculator.GetD1Neighbors(this.AsReadOnly(), this._playerLocations[this._currentPlayer], distance: 1)
+			return this.GetBoardCalculator()
+				.GetD1Neighbors(this._playerLocations[this._currentPlayer], distance: 1)
 				.Where(location => !this._board[location].Player.HasValue)
 				.Select(Move.Create);
 		}
@@ -148,18 +149,23 @@ namespace blockade
 			return this._playerLocations[player];
 		}
 
+		public BoardCalculator GetBoardCalculator()
+		{
+			return this._boardCalculatorFactory(this.AsReadOnly());
+		}
+
 		public class BlockadeStateFactory
 		{
-			private readonly BoardCalculator _boardCalculator;
+			private readonly BoardCalculator.Factory _boardCalculatorFactory;
 
-			public BlockadeStateFactory(BoardCalculator boardCalculator)
+			public BlockadeStateFactory(BoardCalculator.Factory boardCalculatorFactory)
 			{
-				this._boardCalculator = boardCalculator;
+				this._boardCalculatorFactory = boardCalculatorFactory;
 			}
 
 			public BlockadeState CreateFromConfiguration(BlockadeConfiguration configuration)
 			{
-				return BlockadeState.CreateFromConfiguration(configuration, this._boardCalculator);
+				return BlockadeState.CreateFromConfiguration(configuration, this._boardCalculatorFactory);
 			}
 		}
 	}

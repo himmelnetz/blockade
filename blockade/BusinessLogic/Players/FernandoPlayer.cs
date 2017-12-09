@@ -7,14 +7,10 @@ namespace blockade
 	public class FernandoPlayer : IBlockadePlayer
 	{
 		private readonly Random _random;
-		private readonly BoardCalculator _boardCalculator;
 
-		public FernandoPlayer(
-			Random random,
-			BoardCalculator boardCalculator)
+		public FernandoPlayer(Random random)
 		{
 			this._random = random;
-			this._boardCalculator = boardCalculator;
 		}
 
 		public static BlockadePlayerDescription GetPlayerDescription()
@@ -31,7 +27,8 @@ namespace blockade
 			var okayMoves = moves.Select((m, i) => 
 				{
 					var nextState = state.MakeMove(m);
-					return this._boardCalculator.GetD1Neighbors(nextState, m.Location, distance: 1)
+					return nextState.GetBoardCalculator()
+							.GetD1Neighbors(m.Location, distance: 1)
 							.Where(l => !nextState.GetCell(l).Player.HasValue)
 							.Any()
 						? i
