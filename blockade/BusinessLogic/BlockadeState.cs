@@ -70,11 +70,16 @@ namespace blockade
 
 		public IEnumerable<Move> GetMoves()
 		{
+			return this.GetMoves(this._currentPlayer);
+		}
+
+		public IEnumerable<Move> GetMoves(int player)
+		{
 			Throw.InvalidIf(this.IsGameOver(), "game is over");
 
 			return this.GetBoardCalculator()
-				.GetD1Neighbors(this._playerLocations[this._currentPlayer], distance: 1)
-				.Where(location => !this._board[location].Player.HasValue)
+				.GetD1Neighbors(this._playerLocations[player], distance: 1)
+				.Where(location => this._board[location].IsEmpty())
 				.Select(Move.Create);
 		}
 
@@ -152,6 +157,11 @@ namespace blockade
 		public BoardCalculator GetBoardCalculator()
 		{
 			return this._boardCalculatorFactory(this.AsReadOnly());
+		}
+
+		public Grid<Cell> GetBoard()
+		{
+			return this._board.Clone();
 		}
 
 		public class BlockadeStateFactory
@@ -232,6 +242,11 @@ namespace blockade
 		{
 			this.Player = player;
 			this.Turn = turn;
+		}
+
+		public bool IsEmpty()
+		{
+			return !this.Player.HasValue;
 		}
 
 		public static Cell MakeOccupiedCell(int player, int turn)

@@ -29,7 +29,7 @@ namespace blockade
 					var nextState = state.MakeMove(m);
 					return nextState.GetBoardCalculator()
 							.GetD1Neighbors(m.Location, distance: 1)
-							.Where(l => !nextState.GetCell(l).Player.HasValue)
+							.Where(l => nextState.GetCell(l).IsEmpty())
 							.Any()
 						? i
 						: default(int?);

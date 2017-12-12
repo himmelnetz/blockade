@@ -50,7 +50,7 @@ namespace blockade
 				return weights.Select((weight, i) => 
 					state.GetBoardCalculator()
 						.GetD1Neighbors(state.GetCurrentLocationOfPlayer(player), distance: i + 1)
-						.Sum(l => (state.GetCell(l).Player.HasValue ? -1 : 1) * weight))
+						.Sum(l => (state.GetCell(l).IsEmpty() ? 1 : -1) * weight))
 					.Sum();
 			}
 		}

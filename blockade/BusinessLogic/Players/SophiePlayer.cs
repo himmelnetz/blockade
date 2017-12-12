@@ -22,7 +22,9 @@ namespace blockade
 			return new BlockadePlayerDescription
 			{
 				Name = "Sophie",
-				Description = "STILL IN DEVELOPMENT"
+				Description = "Maximizes heuristic of board after everyone's next move. Heuristic"
+					+ " prefers going towards areas with most available cells when possible, breaking"
+					+ " ties by avoiding neighboring occupied cells"
 			};
 		}
 
@@ -47,13 +49,31 @@ namespace blockade
 
 			public double EvaluateState(ReadOnlyBlockadeState state, int player)
 			{
-				using (var step = this._myProfiler.Step("sophie evaluate state"))
+				return GetReachableCellScore(state, player) * 1000.0
+					+ GetNeighborAversionScore(state, player) * 1.0;
+			}
+
+			public double GetReachableCellScore(ReadOnlyBlockadeState state, int player)
+			{
+				using (var step = this._myProfiler.Step("sophie evaluate state - reachable"))
+				{
+					// so we cant check the reachable count for the current position of the player because that space is
+					// occupied, but we can check all the places they can go and get the max of that as an analog
+					return state.GetMoves(player)
+						.Select(move => state.GetBoardCalculator().GetReachableCellCount(move.Location))
+							.Max();
+				}
+			}
+
+			public double GetNeighborAversionScore(ReadOnlyBlockadeState state, int player)
+			{
+				using (var step = this._myProfiler.Step("sophie evaluate state - neighbor"))
 				{
 					var weights = new[] { 20, 15, 10 };
 					return weights.Select((weight, i) =>
 						state.GetBoardCalculator()
 							.GetD1Neighbors(state.GetCurrentLocationOfPlayer(player), distance: i + 1)
-							.Sum(l => (state.GetCell(l).Player.HasValue ? -1 : 1) * weight))
+							.Sum(l => (state.GetCell(l).IsEmpty() ? 1 : -1) * weight))
 						.Sum();
 				}
 			}

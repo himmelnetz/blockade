@@ -8,12 +8,16 @@ namespace blockade
 	{
 		private readonly BlockadeState _state;
 
-		// for saving instances of calculators once created
-		private BoardCalculator _boardCalculator;
+		private Lazy<Grid<Cell>> _board;
+		private Lazy<BoardCalculator> _boardCalculator;
 
 		public ReadOnlyBlockadeState(BlockadeState state)
 		{
 			this._state = state;
+
+			this._board = new Lazy<Grid<Cell>>(() => state.GetBoard());
+			this._boardCalculator = new Lazy<BoardCalculator>(() => state.GetBoardCalculator());
+
 		}
 
 		public int Rows { get { return this._state.Rows; } }
@@ -23,6 +27,11 @@ namespace blockade
 		public IEnumerable<Move> GetMoves()
 		{
 			return this._state.GetMoves();
+		}
+
+		public IEnumerable<Move> GetMoves(int player)
+		{
+			return this._state.GetMoves(player);
 		}
 
 		public ReadOnlyBlockadeState MakeMove(Move move)
@@ -47,13 +56,14 @@ namespace blockade
 			return this._state.IsGameOver();
 		}
 
+		public Grid<Cell> GetBoard()
+		{
+			return this._board.Value;
+		}
+
 		public BoardCalculator GetBoardCalculator()
 		{
-			if (this._boardCalculator == null)
-			{
-				this._boardCalculator = this._state.GetBoardCalculator();
-			}
-			return this._boardCalculator;
+			return this._boardCalculator.Value;
 		}
 	}
 }
