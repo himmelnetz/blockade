@@ -180,7 +180,7 @@ namespace blockade
 		}
 	}
 
-	public class Move : IEquatable<Move>
+	public class Move : IEqualityComparer<Move>
 	{
 		public Location Location { get; private set; }
 
@@ -194,18 +194,23 @@ namespace blockade
 			return new Move(location);
 		}
 
-		public bool Equals(Move other)
+		public override string ToString()
 		{
-			return this.Location.Equals(other.Location);
+			return this.Location.ToString();
 		}
 
-		public override int GetHashCode()
+		public bool Equals(Move @this, Move other)
 		{
-			return this.Location.GetHashCode();
+			return @this.Location.Equals(other.Location);
+		}
+
+		public int GetHashCode(Move @this)
+		{
+			return @this.Location.GetHashCode();
 		}
 	}
 
-	public class Location : IEquatable<Location>
+	public class Location : IEqualityComparer<Location>
 	{
 		public int Row { get; private set; }
 		public int Col { get; private set; }
@@ -221,19 +226,24 @@ namespace blockade
 			return new Location(row, col);
 		}
 
-		public bool Equals(Location other)
+		public override string ToString()
 		{
-			return Tuple.Create(this.Row, this.Col)
+			return Tuple.Create(this.Row, this.Col).ToString();
+		}
+
+		public bool Equals(Location @this, Location other)
+		{
+			return Tuple.Create(@this.Row, @this.Col)
 				.Equals(Tuple.Create(other.Row, other.Col));
 		}
 
-		public override int GetHashCode()
+		public int GetHashCode(Location @this)
 		{
-			return Tuple.Create(this.Row, this.Col).GetHashCode();
+			return Tuple.Create(@this.Row, @this.Col).GetHashCode();
 		}
 	}
 
-	public class Cell : IEquatable<Cell>
+	public class Cell : IEqualityComparer<Cell>
 	{
 		public int? Player { get; private set; }
 		public int? Turn { get; private set; }
@@ -256,15 +266,20 @@ namespace blockade
 
 		public static Cell EmptyCell = new Cell(player: default(int?), turn: default(int?));
 
-		public bool Equals(Cell other)
+		public override string ToString()
 		{
-			return Tuple.Create(this.Player, this.Turn)
+			return Tuple.Create(this.Player, this.Turn).ToString();
+		}
+
+		public bool Equals(Cell @this, Cell other)
+		{
+			return Tuple.Create(@this.Player, @this.Turn)
 				.Equals(Tuple.Create(other.Player, other.Turn));
 		}
 
-		public override int GetHashCode()
+		public int GetHashCode(Cell @this)
 		{
-			return Tuple.Create(this.Player, this.Turn).GetHashCode();
+			return Tuple.Create(@this.Player, @this.Turn).GetHashCode();
 		}
 	}
 }

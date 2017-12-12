@@ -4,7 +4,8 @@ using System.Linq;
 
 namespace blockade
 {
-	public class Grid<T>
+	public class Grid<T> : IEqualityComparer<Grid<T>>
+		where T : IEqualityComparer<T>
 	{
 		private readonly List<List<T>> _grid;
 
@@ -46,6 +47,23 @@ namespace blockade
 		{
 			return this._grid.SelectMany((row, rowI) => row.Select((t, colI) => selector(Location.Create(rowI, colI), t)));
 		}
+
+		public override string ToString()
+		{
+			return string.Join("\n", this._grid.Select(row => string.Join(", ", row.Select(t => t.ToString()))));
+		}
+
+		public bool Equals(Grid<T> @this, Grid<T> other)
+		{
+			throw new NotImplementedException();
+		}
+
+		public int GetHashCode(Grid<T> @this)
+		{
+			return @this.Enumerate((location, t) => Tuple.Create(location, t))
+				// bolch's effective jave list hash
+				.Aggregate(seed: 17, func: (acc, tuple) => acc * 31 + tuple.GetHashCode());
+		}
 	}
 
 	// necessary 2nd class for type inference on static factory
@@ -53,6 +71,7 @@ namespace blockade
 	public static class Grid
 	{
 		public static Grid<T> Create<T>(int rows, int cols, Func<int, int, T> selector)
+			where T : IEqualityComparer<T>
 		{
 			Throw.IfOutOfRange(rows, lo: 0, hi: default(int?));
 			Throw.IfOutOfRange(cols, lo: 0, hi: default(int?));

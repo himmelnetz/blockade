@@ -10,13 +10,15 @@ namespace blockade
 
 		public delegate BoardCalculator Factory(ReadOnlyBlockadeState state);
 
-		private readonly Lazy<Grid<int?>> _connectedComponentLabels;
+		private readonly Lazy<Grid<NullableInt>> _connectedComponentLabels;
 
-		public BoardCalculator(ReadOnlyBlockadeState state)
+		public BoardCalculator(
+			ReadOnlyBlockadeState state,
+			MyProfiler myProfiler)
 		{
 			this._state = state;
 
-			this._connectedComponentLabels = new Lazy<Grid<int?>>(() => ComputeConnectedComponents(state));
+			this._connectedComponentLabels = new Lazy<Grid<NullableInt>>(() => ComputeConnectedComponents(state, myProfiler));
 		}
 
 		public IEnumerable<Location> GetD1Neighbors(Location location, int distance)
@@ -60,9 +62,11 @@ namespace blockade
 		}
 
 		// static so it can be used in a lazy
-		private static Grid<int?> ComputeConnectedComponents(ReadOnlyBlockadeState state)
+		private static Grid<NullableInt> ComputeConnectedComponents(ReadOnlyBlockadeState state, MyProfiler myProfiler)
 		{
-			var labels = Grid.Create(state.Rows, state.Cols, (row, col) => default(int?));
+			myProfiler.RecordArguments("compute connected components", state.GetBoard().ToString());
+
+			var labels = Grid.Create(state.Rows, state.Cols, (row, col) => new NullableInt(default(int?)));
 			var currentLabel = 0;
 			state.GetBoard().ForEach((location, cell) =>
 			{
@@ -75,11 +79,11 @@ namespace blockade
 			return labels;
 		}
 
-		private static void ApplyLabel(ReadOnlyBlockadeState state, Grid<int?> labels, Location location, int label)
+		private static void ApplyLabel(ReadOnlyBlockadeState state, Grid<NullableInt> labels, Location location, int label)
 		{
 			Throw.If(labels[location].HasValue);
 
-			labels[location] = label;
+			labels[location] = new NullableInt(label);
 			GetD1Neighbors(state, location, distance: 1)
 				.ToList()
 				.ForEach(newLocation =>
@@ -96,6 +100,32 @@ namespace blockade
 		{
 			return location.Row >= 0 && location.Row < state.Rows
 				&& location.Col >= 0 && location.Col < state.Cols;
+		}
+
+		// have to define our own class to get the IEquatableComparer impl... really annoying Nullable<T> doesnt do that by default
+		private class NullableInt : IEqualityComparer<NullableInt>
+		{
+			private readonly int? _int;
+
+			public NullableInt(int? @int)
+			{
+				this._int = @int;
+			}
+
+			public bool HasValue { get { return this._int.HasValue; } }
+
+			public int Value { get { return this._int.Value; } }
+
+			public bool Equals(NullableInt @this, NullableInt other)
+			{
+				return Tuple.Create(@this.HasValue, @this._int ?? 0)
+					.Equals(Tuple.Create(other.HasValue, other._int ?? 0));
+			}
+
+			public int GetHashCode(NullableInt @this)
+			{
+				return Tuple.Create(@this.HasValue, @this._int ?? 0).GetHashCode();
+			}
 		}
 	}
 }

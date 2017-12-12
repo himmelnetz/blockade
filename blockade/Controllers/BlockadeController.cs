@@ -94,7 +94,8 @@ namespace blockade.Controllers
 					.ToArray(),
 				NumGamesPlayed = data.NumGames,
 				TimeTakenSeconds = stopwatch.Elapsed.TotalSeconds,
-				ProfilerData = this._myProfiler.GetAllData()
+				ProfilerTimingData = this._myProfiler.GetAllTimingData(),
+				ProfilerArgumentCountDistribution = this._myProfiler.GetArgumentCountDistribution()
 			});
 		}
 
@@ -145,7 +146,8 @@ namespace blockade.Controllers
 			public double[][] WinPercentages { get; set; }
 			public int NumGamesPlayed { get; set; }
 			public double TimeTakenSeconds { get; set; }
-			public List<MyProfiler.ProfilerData> ProfilerData { get; set; }
+			public List<MyProfiler.ProfilerTimingData> ProfilerTimingData { get; set; }
+			public List<MyProfiler.ProfilerArgumentCountDistribution> ProfilerArgumentCountDistribution { get; set; }
 		}
 	}
 }

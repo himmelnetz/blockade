@@ -293,7 +293,8 @@ var PlayManyGamesComponent = function(remote_blockade_service) {
 			_set_to_new_win_percentages(data.WinPercentages);
 			$("#play-many-games-output-num-played").html(data.NumGamesPlayed);
 			$("#play-many-games-output-time-taken").html(Math.round(data.TimeTakenSeconds * 100) / 100);
-			console.log(data.ProfilerData);
+			console.log("profiler timing data", data.ProfilerTimingData);
+			console.log("profiler argument data", data.ProfilerArgumentCountDistribution);
 		});
 	};
 	
