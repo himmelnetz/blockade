@@ -13,12 +13,11 @@ namespace blockade
 		private readonly Lazy<Grid<NullableInt>> _connectedComponentLabels;
 
 		public BoardCalculator(
-			ReadOnlyBlockadeState state,
-			MyProfiler myProfiler)
+			ReadOnlyBlockadeState state)
 		{
 			this._state = state;
 
-			this._connectedComponentLabels = new Lazy<Grid<NullableInt>>(() => ComputeConnectedComponents(state, myProfiler));
+			this._connectedComponentLabels = new Lazy<Grid<NullableInt>>(() => ComputeConnectedComponents(state));
 		}
 
 		public IEnumerable<Location> GetD1Neighbors(Location location, int distance)
@@ -62,10 +61,8 @@ namespace blockade
 		}
 
 		// static so it can be used in a lazy
-		private static Grid<NullableInt> ComputeConnectedComponents(ReadOnlyBlockadeState state, MyProfiler myProfiler)
+		private static Grid<NullableInt> ComputeConnectedComponents(ReadOnlyBlockadeState state)
 		{
-			myProfiler.RecordArguments("compute connected components", state.GetBoard().ToString());
-
 			var labels = Grid.Create(state.Rows, state.Cols, (row, col) => new NullableInt(default(int?)));
 			var currentLabel = 0;
 			state.GetBoard().ForEach((location, cell) =>
