@@ -17,6 +17,7 @@ namespace blockade
 
 		public int Rows { get { return this._board.Rows; } }
 		public int Cols { get { return this._board.Cols; } }
+		public int PlayerCount { get { return this._playerLocations.Length; } }
 
 		public int CurrentPlayer { get { return this._currentPlayer; } }
 
@@ -128,6 +129,11 @@ namespace blockade
 		public bool IsGameOver()
 		{
 			return this._finalResults.Count == this._playerLocations.Length;
+		}
+
+		public bool IsPlayerOut(int player)
+		{
+			return this._playerLocations[player] == null;
 		}
 
 		public BlockadeResult ToResult()

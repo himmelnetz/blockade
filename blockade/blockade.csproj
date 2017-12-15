@@ -100,7 +100,6 @@
     <Compile Include="BusinessLogic\BlockadeConfiguration.cs" />
     <Compile Include="Utilities\Throw.cs" />
     <Compile Include="BusinessLogic\Players\IBlockadePlayer.cs" />
-    <Compile Include="BusinessLogic\Players\SophiePlayer.cs" />
     <Compile Include="BusinessLogic\Players\IBlockadeHeuristic.cs" />
     <Compile Include="BusinessLogic\Players\SingleLevelMoveEvaluator.cs" />
     <Compile Include="BusinessLogic\BlockadeState.cs" />
@@ -109,6 +108,8 @@
     <Compile Include="BusinessLogic\Players\SimpleMultiLevelMoveEvaluator.cs" />
     <Compile Include="Utilities\MyProfiler.cs" />
     <Compile Include="Utilities\Grid.cs" />
+    <Compile Include="BusinessLogic\Players\SophiePlayer.cs" />
+    <Compile Include="BusinessLogic\Players\MiraPlayer.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\Web.config" />

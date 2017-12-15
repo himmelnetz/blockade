@@ -17,11 +17,11 @@ namespace blockade
 
 			this._board = new Lazy<Grid<Cell>>(() => state.GetBoard());
 			this._boardCalculator = new Lazy<BoardCalculator>(() => state.GetBoardCalculator());
-
 		}
 
 		public int Rows { get { return this._state.Rows; } }
 		public int Cols { get { return this._state.Cols; } }
+		public int PlayerCount { get { return this._state.PlayerCount; } }
 		public int CurrentPlayer { get { return this._state.CurrentPlayer; } }
 
 		public IEnumerable<Move> GetMoves()
@@ -64,6 +64,11 @@ namespace blockade
 		public BoardCalculator GetBoardCalculator()
 		{
 			return this._boardCalculator.Value;
+		}
+
+		public bool IsPlayerOut(int player)
+		{
+			return this._state.IsPlayerOut(player);
 		}
 	}
 }

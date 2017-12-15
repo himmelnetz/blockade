@@ -14,6 +14,7 @@ namespace blockade
 			builder.RegisterType<FernandoPlayer>().InstancePerDependency();
 			builder.RegisterType<HelmutPlayer>().InstancePerDependency();
 			builder.RegisterType<SophiePlayer>().InstancePerDependency();
+			builder.RegisterType<MiraPlayer>().InstancePerDependency();
 			builder.RegisterType<PlayerProvider>().InstancePerDependency();
 			builder.RegisterType<BlockadeState.BlockadeStateFactory>().InstancePerDependency();
 			builder.RegisterType<BlockadeGame>().InstancePerDependency();

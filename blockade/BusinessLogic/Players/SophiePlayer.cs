@@ -49,7 +49,7 @@ namespace blockade
 
 			public double EvaluateState(ReadOnlyBlockadeState state, int player)
 			{
-				return GetReachableCellScore(state, player) * 1000.0
+				return GetReachableCellScore(state, player) * 100.0
 					+ GetNeighborAversionScore(state, player) * 1.0;
 			}
 

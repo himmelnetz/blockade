@@ -10,17 +10,20 @@ namespace blockade
 		private readonly Func<FernandoPlayer> _fernandoPlayerFactory;
 		private readonly Func<HelmutPlayer> _helmutPlayerFactory;
 		private readonly Func<SophiePlayer> _sophiePlayerFactory;
+		private readonly Func<MiraPlayer> _miraPlayerFactory;
 
 		public PlayerProvider(
 			Func<ZedPlayer> zedPlayerFactory,
 			Func<FernandoPlayer> fernandoPlayerFactory,
 			Func<HelmutPlayer> helmutPlayerFactory,
-			Func<SophiePlayer> sophiePlayerFactory)
+			Func<SophiePlayer> sophiePlayerFactory,
+			Func<MiraPlayer> miraPlayerFactory)
 		{
 			this._zedPlayerFactory = zedPlayerFactory;
 			this._fernandoPlayerFactory = fernandoPlayerFactory;
 			this._helmutPlayerFactory = helmutPlayerFactory;
 			this._sophiePlayerFactory = sophiePlayerFactory;
+			this._miraPlayerFactory = miraPlayerFactory;
 		}
 
 		public IBlockadePlayer GetPlayer(string playerName)
@@ -41,6 +44,10 @@ namespace blockade
 			{
 				return this._sophiePlayerFactory();
 			}
+			if (StringComparer.OrdinalIgnoreCase.Equals(playerName, "mira"))
+			{
+				return this._miraPlayerFactory();
+			}
 			throw new ArgumentException("Trying to get a player that doesnt exist: '" + playerName + "'");
 		}
 
@@ -51,7 +58,8 @@ namespace blockade
 				ZedPlayer.GetPlayerDescription(),
 				FernandoPlayer.GetPlayerDescription(),
 				HelmutPlayer.GetPlayerDescription(),
-				SophiePlayer.GetPlayerDescription()
+				SophiePlayer.GetPlayerDescription(),
+				MiraPlayer.GetPlayerDescription()
 			}.ToList();
 		}
 	}
