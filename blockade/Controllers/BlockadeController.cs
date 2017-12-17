@@ -6,6 +6,9 @@ using System.IO;
 using System.Web.Mvc;
 using Newtonsoft.Json;
 using System.Diagnostics;
+using System.Threading.Tasks;
+using System.Threading;
+using Autofac;
 
 namespace blockade.Controllers
 {
@@ -78,10 +81,22 @@ namespace blockade.Controllers
 			stopwatch.Start();
 			this._myProfiler.ClearAllData();
 
-			// todo parallel?
-			var results = Enumerable.Range(0, data.NumGames)
-				.Select(_ => this._blockadeGameFactory(configuration).Run())
+			var games = Enumerable.Range(0, data.NumGames)
+				.Select(_ => this._blockadeGameFactory(configuration))
 				.ToList();
+
+			var results = new List<BlockadeResult>(capacity: data.NumGames);
+			var resultLock = new Object();
+
+			ThreadPool.SetMaxThreads(workerThreads: 2, completionPortThreads: 2);
+			Parallel.ForEach(games, game =>
+			{
+				var result = game.Run();
+				lock (resultLock)
+				{
+					results.Add(result);
+				}
+			});
 
 			stopwatch.Stop();
 
